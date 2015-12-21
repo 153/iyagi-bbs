@@ -1,0 +1,3 @@
+demo
+Admin!5yOaZrqx.c >< 2015-12-21 [Mon] 12:52 ><  >< Welcome to wbs (web board system) v0.4, a textboard inspired by 2channel, Kareha, and Shiichan. <br><br>It still has a ways to go, but as of now, the script supports:<br><br>- Thread posting<br>- Thread indexing <br>- Thread replying with/without bumps<br>- Tripcodes<br><br>Please wait warmly for future updates! 
+Anonymous >< 2015-12-21 [Mon] 12:55 >< 1 >< Things remaining to be added:<br>- Themes / Themepicker<br>- Replies such as &gt;&gt;1, &gt;&gt;5, etc<br>- A proper threadbox for the main page <br>- Some kind of markup format <br>- Admin panel<br>- RSS list of threads<br><br>Possible finalizing additions:<br>- Youtube / Soundcloud embed<br>- Twitter login as an alternative to tripcodes for identifying posts 
