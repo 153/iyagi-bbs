@@ -101,14 +101,19 @@ def bbs_thread(t_id='', prev=0):
                 else:
                     if len(reply[2].split('<br>')) > 8:
                         reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850] \
-                            + "</p><div class='rmr'>[Read more... " \
-                            + "<a href='?m=thread;t={0}'>".format(t_id) \
-                            + "View full</a>]</div>" 
+                            + "</p><div class='rmr'>Post shortened. " \
+                            + "<a href='?m=thread;t={0}'>[".format(t_id) \
+                            + "View full thread]</a></div>" 
                     elif len(reply[2]) > 850:
                         reply[2] = reply[2][:850]  + "</p>" \
-                            + "<div class='rmr'>[Read more... " +\
+                            + "<div class='rmr'>Post shortened. " +\
                             "<a href='?m=thread;t={0}'>".format(t_id) \
-                            + "View full]</a></div>"
+                            + "[View full thread]</a></div>"
+                    elif int(r_cnt) > 4 and p_n == int(r_cnt):
+                        reply[2] = reply[2] + "</p><div class='rmr'>" \
+                            +"<a href='?m=thread;t={0}'".format(t_id) \
+                            +">[Read all posts]</a></div>"
+                            
                 replies.append(reply)
             if prev == 0:
                 print("</div>")
