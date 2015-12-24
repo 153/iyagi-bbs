@@ -1,0 +1,35 @@
+a {color:#153}
+body {padding:2% 5%}
+table {border-collapse: seperate;
+  border-spacing: 0;
+  border: 0px solid #000;}
+th, td {border: 1px solid #000; 
+  padding: 2px;}
+
+div.thread {
+  width: 680px;
+  border-right: 13px solid black;
+  padding-right: 28px;
+  text-align: justify;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+hr {
+	width: 620px;
+	text-align: left;
+	margin-left: 0;
+}
+
+div.thread > p {padding-left: 4%}
+
+div.thread > i {padding-left: 0%}
+
+.bump {color: #153; font-weight: bold}
+.sage {color: #444; font-weight: bold; font-style: italic}
+.trip {color: #889; font-weight: normal}
+.rmr {padding-top:0.5em;
+	  padding-left: 2em;
+	  height: 1.6em;
+	  background-color:#ffc;
+	  font-style: italic;}
