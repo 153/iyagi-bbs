@@ -46,15 +46,7 @@ def main():
 def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
-    print("""<style>
-a {color:#153}
-body {padding:2% 5%}
-table {border-collapse: seperate;
-  border-spacing: 0;
-  border: 0px solid #000;}
-th, td {border: 1px solid #000; 
-  padding: 2px;}
-</style>""")
+    print("<link rel='stylesheet' href='style.css'>")
     
 def bbs_admin():
     for confg in board_config:
@@ -86,7 +78,7 @@ def bbs_thread(t_id='', prev=0):
             r_cnt = str(len(the_thread) - 1)
             if prev == 0:
                 print("<h3>", the_thread[0] + "[" + r_cnt + "]", "</h3>")
-            print("<div style='width:520px;border-right:2px solid black;padding-right:10px'>")
+                print("<div class='thread'>")
             p_n = 0
             replies=[]
             for reply in the_thread[1:]:
@@ -96,18 +88,30 @@ def bbs_thread(t_id='', prev=0):
                     reply[3] = " >< ".join(reply[3:])
                 if reply[2]:
                     reply.pop(2)
-                    reply[0] = "<i style='color:#444'>" \
-                        + reply[0] + "</i>"
+                    reply[0] = "<span class='sage'>" \
+                        + reply[0] + "</span>"
                 else:
                     reply.pop(2) #30c
-                    reply[0] = "<b style='color:#153'>" \
-                        + reply[0] + "</b>"
+                    reply[0] = "<span class='bump'>" \
+                        + reply[0] + "</span>"
                 if prev == 0:
-                    print("<p> #" + str(p_n), "//")
-                    print("Name: {0} :\n Date: {1} \n<br>{2}".format(*reply))
+                    
+                    print("</p>#" + str(p_n), "//")
+                    print("Name: {0} :\n Date: {1} \n<p>{2}".format(*reply))
+                else:
+                    if len(reply[2].split('<br>')) > 8:
+                        reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850] \
+                            + "</p><div class='rmr'>[Read more... " \
+                            + "<a href='?m=thread;t={0}'>".format(t_id) \
+                            + "View full</a>]</div>" 
+                    elif len(reply[2]) > 850:
+                        reply[2] = reply[2][:850]  + "</p>" \
+                            + "<div class='rmr'>[Read more... " +\
+                            "<a href='?m=thread;t={0}'>".format(t_id) \
+                            + "View full]</a></div>"
                 replies.append(reply)
-            print("</div>")
             if prev == 0:
+                print("</div>")
                 bbs_reply(t_fn)
             return replies
             
@@ -128,8 +132,8 @@ def bbs_create():
             if '#' in thread_attrs['name']:
                 namentrip = thread_attrs['name'].split('#')
                 namentrip[1] = tripcode(namentrip[1])
-                thread_attrs['name'] = ''.join(namentrip)
-        thread_attrs['content'] = cgi.escape(thread_attrs['content']).replace('\r\n', "<br>")[:2000]
+                thread_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
+        thread_attrs['content'] = cgi.escape(thread_attrs['content']).strip.replace('\r\n', "<br>")[:2000]
         thread_attrs['dt'] = str(time.time())[:10]
         if not thread_attrs['name']:
             thread_attrs['name'] = 'Anonymous'
@@ -185,14 +189,14 @@ def do_reply():
         if form.getvalue(key):
             reply_attrs[key] = form.getvalue(key)
     if reply_attrs['t'] and reply_attrs['comment']:
-        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).replace('\r\n', "<br>")[:2000]
+        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).strip().replace('\r\n', "<br>").replace("<br><br><br><br>", "<br>")[:2000]
         if reply_attrs['name']:
             reply_attrs['name'] = \
                 cgi.escape(reply_attrs['name'][:14]).strip()
             if '#' in reply_attrs['name']:
                 namentrip = reply_attrs['name'].split('#')
                 namentrip[1] = tripcode(namentrip[1])
-                reply_attrs['name'] = '</i>'.join(namentrip)
+                reply_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
         else:
             reply_attrs['name'] = "Anonymous"
         if not reply_attrs['bump']:
@@ -253,6 +257,7 @@ def do_prev(bbt=[]):
             for t in t_list:
                 t = t.split(" >< ")
                 bbs = bbs_thread(t[0], 1)
+                print("<div class='thread'>")
                 do_prev([bbs, t[0]])
 
     if bbt:
@@ -269,11 +274,12 @@ def do_prev(bbt=[]):
         for replies in bbt[0]:
             pstcnt += 1
             if pstcnt == 1 or pstcnt >= bbn:
-                print("<p>#{0}".format(pstcnt))
-                print("Name: {0} \n: Date: {1} \n<br>{2}".format(*replies))
+                print("</p>#{0} //".format(pstcnt))
+                print("Name: {0} \n: Date: {1} \n<p>{2}".format(*replies))
             if pstcnt == 1 and len(bbt[0]) > 4:
                 print("<hr width='420px' align='left'>")
             elif pstcnt == len(bbt[0]):
+                print("</div>")
                 print("<hr width='420px' align='left'>")
                 bbs_reply(board_config[5][1] + bbt[1]+".txt")
         
@@ -281,6 +287,6 @@ def tripcode(pw):
     pw = pw[:8]
     salt = (pw + "H..")[1:3]
     trip = crypt.crypt(pw, salt)
-    return ("!" + trip[-10:])
+    return (" !" + trip[-10:])
 
 main()
