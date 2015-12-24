@@ -2,14 +2,16 @@
 
 import cgi, os, cgitb
 import time, crypt
+import mistune
 
+markdown = mistune.markdown
 cgitb.enable()
 
 board_config = \
     [["b_name", "4x13 BBS"], \
      ["b_url", "/bbs/"], \
      ["mod_un", "Admin"], \
-     ["mod_pw", ""], \
+     ["mod_pw", "tyF/EWEkIY"], \
      ["theme", "alpha"], \
      ["t_dir", "./threads/"], \
      ["t_list", "./threads/list.txt"]]
@@ -43,10 +45,12 @@ def main():
     if not select_func:
         bbs_main()
 
+    bbs_foot()
 def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='style.css'>")
+    print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
     
 def bbs_admin():
     for confg in board_config:
@@ -55,7 +59,7 @@ def bbs_admin():
 def bbs_main():
     print("<h2>{0}</h2>".format(board_config[0][1]))
     bbs_list()
-    print("<p>")
+    print("<p><hr>")
     do_prev()
     print("<hr>")
     bbs_create()
@@ -188,6 +192,10 @@ def bbs_reply(t_fn=''):
     with open("reply.html") as r_thread:
         print(r_thread.read().format(t_fn))
 
+def bbs_foot():
+    with open("foot.html") as b_foot:
+        print(b_foot.read())
+        
 def do_reply():
     reply_attrs = {'name':'', 'bump':'', 'comment':'', 't':''}
     for key in reply_attrs.keys():
@@ -201,7 +209,11 @@ def do_reply():
             if '#' in reply_attrs['name']:
                 namentrip = reply_attrs['name'].split('#')
                 namentrip[1] = tripcode(namentrip[1])
-                reply_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
+                if board_config[3][1] in namentrip[1]:
+                    namentrip[1] = " Admin"
+                    reply_attrs['name'] = '</span> <span class="admin">'.join(namentrip)
+                else:
+                    reply_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
         else:
             reply_attrs['name'] = "Anonymous"
         if not reply_attrs['bump']:
@@ -257,8 +269,7 @@ def do_reply():
 def do_prev(bbt=[]):
     if not bbt:
         with open(board_config[6][1]) as t_list:
-            t_list = t_list.read().splitlines()
-            t_list = t_list[:10]
+            t_list = t_list.read().splitlines()[:10]
             for t in t_list:
                 t = t.split(" >< ")
                 bbs = bbs_thread(t[0], 1)
@@ -292,6 +303,6 @@ def tripcode(pw):
     pw = pw[:8]
     salt = (pw + "H..")[1:3]
     trip = crypt.crypt(pw, salt)
-    return (" !" + trip[-10:])
+    return (" !" + trip)
 
 main()
