@@ -19,16 +19,16 @@ The script iyagi (이야기,  "chat") is still in a very early beta, but it curr
 - Vanilla install
 
 ## 2. Screenshots
-<a href="https://i.imgur.com/p00emB2.png"><img src="https://i.imgur.com/p00emB2m.png"></a>
+<a href="https://i.imgur.com/p00emB2.png"><img src="https://i.imgur.com/p00emB2m.png"></a><br>
 \1. Frontpage, thread list, thread preview
 
-<a href="https://i.imgur.com/NG91EX1.png"><img src="https://i.imgur.com/NG91EX1m.png"></a>
+<a href="https://i.imgur.com/NG91EX1.png"><img src="https://i.imgur.com/NG91EX1m.png"></a><br>
 \2. Thread preview, replybox
 
-<a href="https://i.imgur.com/ayTsqqD.png"><img src="https://i.imgur.com/ayTsqqDm.png"></a>
+<a href="https://i.imgur.com/ayTsqqD.png"><img src="https://i.imgur.com/ayTsqqDm.png"></a><br>
 \3. Illustration of long post trunctuation in the index
 
-<a href="https://i.imgur.com/1YUESsM.png"><img src="https://i.imgur.com/1YUESsMm.png"></a>
+<a href="https://i.imgur.com/1YUESsM.png"><img src="https://i.imgur.com/1YUESsMm.png"></a><br>
 \4. Threadpage and replybox 
 
 ## 3. Installation
@@ -37,7 +37,7 @@ Installation couldn't be easier. Just download (at least) index.py3 and the .htm
 Moderation is currently done by managing text files in a directory; the default directory is "./threads/". You need to have at least one valid thread on the board to enable posting; if you need to initialize the board, create a folder called "./threads/" that's readable/writable by the web daemon, and in there, a file called "list.txt" and another called "0.txt".
 
     list.txt contents:
-      0 >< 0 >< 0 >< 0 
+    0 >< 0 >< 0 >< 0 
       
     0.txt contents:
     0
