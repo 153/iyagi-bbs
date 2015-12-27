@@ -1,0 +1,23 @@
+### Welcome!
+This is an early version of 4x13's own BBS, *iyagi*.
+It works via a flatfile database and already has many features
+from textboards such as Shiichan and Kareha implemented. 
+
+*iyagi* is public domain, which means that anyone can copy it
+and modify or use their copy of the script to their own ends.
+However, post here at your discretion, and consider whatever
+you post to be possibly subject to deletion. You can browse
+the source code and follow updates / contribute to the project
+[here](//github.com/153/iyagi-bbs).
+
+Current features:
+- Thread creation, indexing, previews
+- Bumps/sages
+- [yt]youtube[/yt], [code]code[/code], [aa]ascii art[/aa]
+- Tripcodes, admin capcode
+
+Needs:
+- Sticky, Lock, Stickylock, Permasage
+- Admin panel, anti-spam
+- RSS feed
+- Alternate themes
