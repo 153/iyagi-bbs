@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 
-import cgi, os, cgitb
-import time, crypt
-import mistune
+import os, cgi, cgitb
+import time, re, crypt
+import html, mistune
 
 markdown = mistune.markdown
 cgitb.enable()
+
+# To generate a mod password, use tripcode.py3 to generate a tripkey.
+# What comes out is the result of a code that generates something like
+# a public key. Type #password in the name field to have your post
+# render as the mod_un using a special color. Save your !tripcode in the
+# mod_pw field to do so, without an exclamation mark in front. Your tripkey
+# should be 10 letters long, the result of an 8 character secure password
+# that you know others can't guess easily.
+#
+# b_url and theme currently are unused.
 
 board_config = \
     [["b_name", "4x13 BBS"], \
@@ -46,11 +56,18 @@ def main():
         bbs_main()
 
     bbs_foot()
+
 def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='style.css'>")
     print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
+    print("""<script language="javascript">
+function addText(elId,text) {
+    text = ">>" + text + " \\r";
+    document.getElementById(elId).value += text;
+}
+</script>""")
     
 def bbs_admin():
     for confg in board_config:
@@ -58,6 +75,11 @@ def bbs_admin():
 
 def bbs_main():
     print("<h2>{0}</h2>".format(board_config[0][1]))
+    with open("motd.txt", "r") as motd:
+        motd = motd.read()
+        print("<div style='background-color:white; padding-left: 30px; width:580px; border:1px dashed black'>")
+        print(markdown(motd))
+        print("</div><p>")
     bbs_list()
     print("<p><hr>")
     do_prev()
@@ -98,11 +120,21 @@ def bbs_thread(t_id='', prev=0):
                     reply.pop(2) #30c
                     reply[0] = "<span class='bump'>" \
                         + reply[0] + "</span>"
+                
                 if prev == 0:
-                    
-                    print("</p>#" + str(p_n), "//")
+                    if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
+                        reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
+                            r'<a href="#\1">&gt;&gt;\1</a>', reply[2])
+                    reply[2] = do_format(reply[2])   
+                    print("</p><a name='{0}' href='#reply'".format(p_n))
+                    print("onclick='addText(\"{1}\", \"{0}\")'".format(p_n, t_id))
+                    print("'>#{0}</a> //".format(p_n))
                     print("Name: {0} :\n Date: {1} \n<p>{2}".format(*reply))
                 else:
+                    if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
+                        reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
+                            r'<a href="?m=thread;t={0}#\1">&gt;&gt;\1</a>'.format(t_id), reply[2])
+                    reply[2] = do_format(reply[2])
                     if len(reply[2].split('<br>')) > 8:
                         reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850] \
                             + "</p><div class='rmr'>Post shortened. " \
@@ -120,8 +152,8 @@ def bbs_thread(t_id='', prev=0):
                             
                 replies.append(reply)
             if prev == 0:
-                print("</div>")
-                bbs_reply(t_fn)
+                print("</div><br>")
+                bbs_reply(t_fn, t_id)
             return replies
             
     else:
@@ -139,10 +171,10 @@ def bbs_create():
             thread_attrs['name'] = \
                 cgi.escape(thread_attrs['name'])[:14].strip()
             if '#' in thread_attrs['name']:
-                namentrip = thread_attrs['name'].split('#')
+                namentrip = thread_attrs['name'].split('#')[:2]
                 namentrip[1] = tripcode(namentrip[1])
                 thread_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
-        thread_attrs['content'] = cgi.escape(thread_attrs['content']).strip.replace('\r\n', "<br>")[:2000]
+        thread_attrs['content'] = cgi.escape(thread_attrs['content']).strip().replace('\r\n', "<br>")[:2000]
         thread_attrs['dt'] = str(time.time())[:10]
         if not thread_attrs['name']:
             thread_attrs['name'] = 'Anonymous'
@@ -156,6 +188,8 @@ def bbs_create():
                 + thread_attrs['ldt'] + " ><  >< " \
                 + thread_attrs['content'] + "\n" )
             print("Thread <i>{0}</i> posted successfully!".format(thread_attrs['title']))
+            print("<p>Redirecting you in 5 seconds...")
+            print("<meta http-equiv='refresh' content='5;.'")
         with open(board_config[6][1]) as t_list:
             t_list = t_list.read().splitlines()
             new_t = " >< ".join([thread_attrs['dt'], \
@@ -188,9 +222,9 @@ def bbs_list():
             cnt += 1
         print("</table>")
 
-def bbs_reply(t_fn=''):
+def bbs_reply(t_fn='', t_id=''):
     with open("reply.html") as r_thread:
-        print(r_thread.read().format(t_fn))
+        print(r_thread.read().format(t_fn, t_id))
 
 def bbs_foot():
     with open("foot.html") as b_foot:
@@ -202,15 +236,16 @@ def do_reply():
         if form.getvalue(key):
             reply_attrs[key] = form.getvalue(key)
     if reply_attrs['t'] and reply_attrs['comment']:
-        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).strip().replace('\r\n', "<br>").replace("<br><br><br><br>", "<br>")[:2000]
+        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).strip().replace('\r\n', "<br>").replace("<br><br><br><br>", "<br>")[:5000]
+#        reply_attrs['comment']
         if reply_attrs['name']:
             reply_attrs['name'] = \
                 cgi.escape(reply_attrs['name'][:14]).strip()
             if '#' in reply_attrs['name']:
-                namentrip = reply_attrs['name'].split('#')
+                namentrip = reply_attrs['name'].split('#')[:2]
                 namentrip[1] = tripcode(namentrip[1])
                 if board_config[3][1] in namentrip[1]:
-                    namentrip[1] = " Admin"
+                    namentrip[1] = board_config[2][1]
                     reply_attrs['name'] = '</span> <span class="admin">'.join(namentrip)
                 else:
                     reply_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
@@ -229,7 +264,13 @@ def do_reply():
               + reply_attrs['comment'] + "\n"
         with open(reply_attrs['t'], "a") as the_thread:
             the_thread.write(reply_string)
-            print("comment successfully posted :)<br>")
+        with open(board_config[5][1] + "ips.txt", "a") as log:
+            ip = os.environ["REMOTE_ADDR"]
+            log_data = " | ".join([ip, reply_attrs['t'], reply_string])
+            log.write(log_data)
+            print("comment successfully posted<p>")
+            print("Redirecting you in 5 seconds...")
+            print("<meta http-equiv='refresh' content='5;.'")
             
         with open(board_config[6][1]) as t_list:
             reply_attrs['t'] = ''.join([i for i in reply_attrs['t'] if i.isdigit()])
@@ -283,7 +324,7 @@ def do_prev(bbt=[]):
             bbn = len(bbt[0]) - 2
         else:
             bbn = 1
-        with open("./threads/" + str(bbt[1]) + ".txt") as t_t:
+        with open(board_config[5][1] + str(bbt[1]) + ".txt") as t_t:
             t_t = t_t.readline()
         print("<h3><a href='?m=thread;t={0}'>{1} [{2}]".format(bbt[1], t_t, len(bbt[0])))
         print("</a></h3>")
@@ -298,11 +339,25 @@ def do_prev(bbt=[]):
                 print("</div>")
                 print("<hr width='420px' align='left'>")
                 bbs_reply(board_config[5][1] + bbt[1]+".txt")
-        
+
+
+def do_format(urp=''):
+    urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\[/yt\]', r'<iframe width="560" height="315" src="https://www.youtube.com/embed/\1" frameborder="0" allowfullscreen></iframe>', urp) 
+    urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<div class="sjis"><b>SJIS:</b><hr>\1<p></div>', urp)
+    urp = re.sub(r'\[spoiler\](.*?)\[/spoiler\]', r'<span class="spoiler">\1</span>', urp)
+    urp = re.sub(r'\[code\](.*?)\[/code\]', r'<pre><b>Code:</b><hr><code>\1</code><p></pre>', urp)
+    urp = urp.split('<br>')
+    for num, line in enumerate(urp):
+        if line[:4] == "&gt;":
+            urp[num] = "<span class='quote'>"+line+"</span>"
+    urp = '<br>'.join(urp)        
+    urp = urp.replace('&amp;', '&').encode('ascii', 'xmlcharrefreplace').decode()
+    return urp
+
 def tripcode(pw):
     pw = pw[:8]
     salt = (pw + "H..")[1:3]
     trip = crypt.crypt(pw, salt)
-    return (" !" + trip)
+    return (" !" + trip[-10:])
 
 main()
