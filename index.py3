@@ -24,7 +24,8 @@ board_config = \
      ["mod_pw", "tyF/EWEkIY"], \
      ["theme", "alpha"], \
      ["t_dir", "./threads/"], \
-     ["t_list", "./threads/list.txt"]]
+     ["t_list", "./threads/list.txt"], \
+     ["t_limit", 100]]
 
 functions = ["main", "thread", "admin", "list", "create", "reply"]
 form = cgi.FieldStorage()
@@ -153,7 +154,10 @@ def bbs_thread(t_id='', prev=0):
                 replies.append(reply)
             if prev == 0:
                 print("</div><br>")
-                bbs_reply(t_fn, t_id)
+                if int(r_cnt) != board_config[7][1]:
+                    bbs_reply(t_fn, t_id)
+                else:
+                    print("<hr>No more replies; thread limit reached!")
             return replies
             
     else:
@@ -262,15 +266,31 @@ def do_reply():
               + reply_attrs['ldt'] + " >< " \
               + reply_attrs['bump'] + " >< " \
               + reply_attrs['comment'] + "\n"
+        fale = 0
+        with open(reply_attrs['t'], "r") as the_thread:
+            ter = the_thread.read().splitlines()
+            if (len(ter) - 1) >= board_config[7][1]:
+                fale = 1
+            else:
+                ter = ter[-1].split(' >< ')
+                if ter[-1] == reply_string.split(' >< ')[-1][:-1]:
+                    fale = 2
+                
         with open(reply_attrs['t'], "a") as the_thread:
-            the_thread.write(reply_string)
+            if fale == 0:
+                the_thread.write(reply_string)
+            elif fale == 1:
+                print("Sorry, thread limit reached!")
+            elif fale == 2:
+                print("Sorry, you already posted that.")
         with open(board_config[5][1] + "ips.txt", "a") as log:
-            ip = os.environ["REMOTE_ADDR"]
-            log_data = " | ".join([ip, reply_attrs['t'], reply_string])
-            log.write(log_data)
-            print("comment successfully posted<p>")
-            print("Redirecting you in 5 seconds...")
-            print("<meta http-equiv='refresh' content='5;.'")
+            if fale == 0:
+                ip = os.environ["REMOTE_ADDR"]
+                log_data = " | ".join([ip, reply_attrs['t'], reply_string])
+                log.write(log_data)
+                print("comment successfully posted<p>")
+                print("Redirecting you in 5 seconds...")
+                print("<meta http-equiv='refresh' content='5;.'")
             
         with open(board_config[6][1]) as t_list:
             reply_attrs['t'] = ''.join([i for i in reply_attrs['t'] if i.isdigit()])
@@ -324,8 +344,9 @@ def do_prev(bbt=[]):
             bbn = len(bbt[0]) - 2
         else:
             bbn = 1
-        with open(board_config[5][1] + str(bbt[1]) + ".txt") as t_t:
-            t_t = t_t.readline()
+        with open(board_config[5][1] + str(bbt[1]) + ".txt") as t:
+            t_t = t.readline()
+            t_r = len(t.read().splitlines())
         print("<h3><a href='?m=thread;t={0}'>{1} [{2}]".format(bbt[1], t_t, len(bbt[0])))
         print("</a></h3>")
         for replies in bbt[0]:
@@ -337,8 +358,11 @@ def do_prev(bbt=[]):
                 print("<hr width='420px' align='left'>")
             elif pstcnt == len(bbt[0]):
                 print("</div>")
-                print("<hr width='420px' align='left'>")
-                bbs_reply(board_config[5][1] + bbt[1]+".txt")
+                if t_r != board_config[7][1]:
+                    print("<hr width='420px' align='left'>")
+                    bbs_reply(board_config[5][1] + bbt[1]+".txt")
+                else:
+                    print("<hr>You cannot reply to this thread any longer.<hr>")
 
 
 def do_format(urp=''):
@@ -361,3 +385,4 @@ def tripcode(pw):
     return (" !" + trip[-10:])
 
 main()
+        
