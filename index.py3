@@ -61,7 +61,8 @@ def main():
 def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
-    print("<link rel='stylesheet' href='style.css'>")
+    print("<link rel='stylesheet' href='0ch.css' title='0ch'>")
+    print("<link rel='stylesheet' href='4x13.css' title='4x13'>")
     print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
     print("""<script language="javascript">
 function addText(elId,text) {
@@ -75,17 +76,14 @@ def bbs_admin():
         print(confg[0]+":", confg[1], "<br>")
 
 def bbs_main():
+    print("<div class='front'>")
     print("<h2>{0}</h2>".format(board_config[0][1]))
-    with open("motd.txt", "r") as motd:
-        motd = motd.read()
-        print("<div style='background-color:white; padding-left: 30px; width:580px; border:1px dashed black'>")
-        print(markdown(motd))
-        print("</div><p>")
     bbs_list()
     print("<p><hr>")
     do_prev()
     print("<hr>")
     bbs_create()
+    print("</div>")
 
 def bbs_thread(t_id='', prev=0):
     if not t_id and form.getvalue('t'):
@@ -137,13 +135,17 @@ def bbs_thread(t_id='', prev=0):
                             r'<a href="?m=thread;t={0}#\1">&gt;&gt;\1</a>'.format(t_id), reply[2])
                     reply[2] = do_format(reply[2])
                     if len(reply[2].split('<br>')) > 8:
-                        reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850] \
-                            + "</p><div class='rmr'>Post shortened. " \
+                        reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850]
+                        if "<pre" and not "</pre>" in reply[2]:
+                            reply[2] += "</pre>"
+                        reply[2] += "</p><div class='rmr'>Post shortened. " \
                             + "<a href='?m=thread;t={0}'>[".format(t_id) \
                             + "View full thread]</a></div>" 
                     elif len(reply[2]) > 850:
-                        reply[2] = reply[2][:850]  + "</p>" \
-                            + "<div class='rmr'>Post shortened. " +\
+                        reply[2] = reply[2][:850]
+                        if "<pre" and not "</pre>" in reply[2]:
+                            reply[2] += "</pre>"
+                        reply[2] += "</p><div class='rmr'>Post shortened. " +\
                             "<a href='?m=thread;t={0}'>".format(t_id) \
                             + "[View full thread]</a></div>"
                     elif int(r_cnt) > 4 and p_n == int(r_cnt):
@@ -331,10 +333,11 @@ def do_prev(bbt=[]):
     if not bbt:
         with open(board_config[6][1]) as t_list:
             t_list = t_list.read().splitlines()[:10]
-            for t in t_list:
+            for n, t in enumerate(t_list):
                 t = t.split(" >< ")
                 bbs = bbs_thread(t[0], 1)
                 print("<div class='thread'>")
+                print("<h3><a>" + str(n+1)+".</a>")
                 do_prev([bbs, t[0]])
 
     if bbt:
@@ -347,7 +350,7 @@ def do_prev(bbt=[]):
         with open(board_config[5][1] + str(bbt[1]) + ".txt") as t:
             t_t = t.readline()
             t_r = len(t.read().splitlines())
-        print("<h3><a href='?m=thread;t={0}'>{1} [{2}]".format(bbt[1], t_t, len(bbt[0])))
+        print("<a href='?m=thread;t={0}'>{1} [{2}]".format(bbt[1], t_t, len(bbt[0])))
         print("</a></h3>")
         for replies in bbt[0]:
             pstcnt += 1
@@ -357,19 +360,19 @@ def do_prev(bbt=[]):
             if pstcnt == 1 and len(bbt[0]) > 4:
                 print("<hr width='420px' align='left'>")
             elif pstcnt == len(bbt[0]):
-                print("</div>")
                 if t_r != board_config[7][1]:
                     print("<hr width='420px' align='left'>")
                     bbs_reply(board_config[5][1] + bbt[1]+".txt")
                 else:
-                    print("<hr>You cannot reply to this thread any longer.<hr>")
+                    print("<hr><i>Thread limit reached.</i><hr><p>")
+                    print("</div>")
 
 
 def do_format(urp=''):
     urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\[/yt\]', r'<iframe width="560" height="315" src="https://www.youtube.com/embed/\1" frameborder="0" allowfullscreen></iframe>', urp) 
-    urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<div class="sjis"><b>SJIS:</b><hr>\1<p></div>', urp)
+    urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<pre class="aa"><b>Ascii Art:</b><hr>\1</pre><p>', urp)
     urp = re.sub(r'\[spoiler\](.*?)\[/spoiler\]', r'<span class="spoiler">\1</span>', urp)
-    urp = re.sub(r'\[code\](.*?)\[/code\]', r'<pre><b>Code:</b><hr><code>\1</code><p></pre>', urp)
+    urp = re.sub(r'\[code\](.*?)\[/code\]', r'<pre><b>Code:</b><hr><code>\1</code></pre><p>', urp)
     urp = urp.split('<br>')
     for num, line in enumerate(urp):
         if line[:4] == "&gt;":
@@ -385,4 +388,3 @@ def tripcode(pw):
     return (" !" + trip[-10:])
 
 main()
-        
