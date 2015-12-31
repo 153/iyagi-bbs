@@ -265,9 +265,14 @@ def bbs_list(prev='0'):
                     + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
             cnt += 1
         if prev != "0":
-            print("<tr><td><td colspan='2'><a href='?m=list'>")
-            print("View all threads</a> ({0} hidden)".format(t_cnt - s_ts))
-            print("<td><a href='#create'>Create new thread</a>")
+            print("<tr><td>")
+            if (t_cnt - s_ts) > 0:
+                print("<td colspan='2'><a href='?m=list'>")
+                print("View all threads</a> ({0} hidden)".format(t_cnt - s_ts))
+                print("<td>")
+            else:
+                print("<td colspan='3'>")
+            print("<a href='#create'>Create new thread</a>")
         print("</table>")
 
 def bbs_reply(t_fn='', t_id=''):
