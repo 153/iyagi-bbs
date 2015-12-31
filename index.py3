@@ -17,6 +17,7 @@ cgitb.enable()
 #
 # b_url and theme currently are unused.
 
+
 board_config = \
     [["b_name", "4x13 BBS"], \
      ["b_url", "/bbs/"], \
@@ -28,11 +29,12 @@ board_config = \
      ["t_limit", 100]]
 
 functions = ["main", "thread", "admin", "list", "create", "reply"]
+
 t_modes = {"0":"", \
     "1":"<img src='./img/lock.png' alt='Lock'>", \
     "2":"<img src='./img/sticky.png' alt='Sticky'>", \
     "3":"<img src='./img/sticky.png'><img src='./img/lock.png'>", \
-    "4":"<img src='./img/dead.png' alt='Nobump'>"}
+    "4":"<img src='./img/ghost.png' alt='Nobump'>"}
 
 form = cgi.FieldStorage()
 
@@ -79,8 +81,26 @@ function addText(elId,text) {
 </script>""")
     
 def bbs_admin():
-    for confg in board_config:
-        print(confg[0]+":", confg[1], "<br>")
+    a_pass = ''
+    if form.getvalue('p'):
+        a_pass = cgi.escape(form.getvalue('p'))
+    if a_pass != board_config[3][1]:
+        print("<form method='post' action='.'>")
+        print("<b>Please enter your password.</b>")
+        print("<input type='hidden' name='m' value='admin'>")
+        print("<input type='text' name='p'>")
+        print("<input type='submit' value='Login'>")
+        print("</form>")
+    else:
+        print("<h2>Config</h2>")
+        for confg in board_config:
+            print(confg[0]+":", confg[1], "<br>")
+        print("<h2>Last 40 posts</h2>")
+        with open(board_config[5][1]+"ips.txt") as ip_l:
+            ip_l = ip_l.read().splitlines()
+            ip_t = len(ip_l)
+            for n, ip in enumerate(ip_l[-1:-41:-1]):
+                print("#"+str(ip_t - n), "<br>", cgi.escape(ip), "<p>")
 
 def bbs_main():
     print("<div class='front'>")
@@ -152,6 +172,8 @@ def bbs_thread(t_id='', prev=0):
                         reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850]
                         if "<pre" and not "</pre>" in reply[2]:
                             reply[2] += "</pre>"
+                        if "<code" and not "</code>" in reply[2]:
+                            reply[2] += "</code>"
                         reply[2] += "</p><div class='rmr'>Post shortened. " \
                             + "<a href='?m=thread;t={0}'>[".format(t_id) \
                             + "View full thread]</a></div>" 
@@ -159,6 +181,8 @@ def bbs_thread(t_id='', prev=0):
                         reply[2] = reply[2][:850]
                         if "<pre" and not "</pre>" in reply[2]:
                             reply[2] += "</pre>"
+                        if "<code" and not "</code>" in reply[2]:
+                            reply[2] += "</code>"
                         reply[2] += "</p><div class='rmr'>Post shortened. " +\
                             "<a href='?m=thread;t={0}'>".format(t_id) \
                             + "[View full thread]</a></div>"
@@ -189,10 +213,10 @@ def bbs_create():
         if form.getvalue(key):
             thread_attrs[key] = form.getvalue(key)
     if thread_attrs['title'] and thread_attrs['content']:
-        thread_attrs['title'] = cgi.escape(thread_attrs['title'])[:25].strip()
+        thread_attrs['title'] = cgi.escape(thread_attrs['title'])[:30].strip()
         if thread_attrs['name']:
             thread_attrs['name'] = \
-                cgi.escape(thread_attrs['name'])[:14].strip()
+                cgi.escape(thread_attrs['name'])[:18].strip()
             if '#' in thread_attrs['name']:
                 namentrip = thread_attrs['name'].split('#')[:2]
                 namentrip[1] = tripcode(namentrip[1])
@@ -293,7 +317,7 @@ def do_reply():
 #        reply_attrs['comment']
         if reply_attrs['name']:
             reply_attrs['name'] = \
-                cgi.escape(reply_attrs['name'][:14]).strip()
+                cgi.escape(reply_attrs['name'][:18]).strip()
             if '#' in reply_attrs['name']:
                 namentrip = reply_attrs['name'].split('#')[:2]
                 namentrip[1] = tripcode(namentrip[1])
@@ -446,7 +470,7 @@ def do_prev(bbt=[]):
                     print("<br><div class='closed'>", t_m)
                     print("Thread locked. No more comments allowed")
                     print("</div><br></div></div>")
-                elif t_r != board_config[7][1]:
+                elif t_r < board_config[7][1]:
                     print("<hr width='420px' align='left'>")
                     bbs_reply(board_config[5][1] + bbt[1]+".txt")
                 else:

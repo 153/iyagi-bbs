@@ -26,6 +26,10 @@ div.thread{
   border-right: 10px solid black;
 }
 
+.front > .thread
+{  border-top: 5px solid black;
+  padding-top: 7px;	}
+
 
 hr {
 	width: 620px;
@@ -59,12 +63,15 @@ div.thread > i {padding-left: 0%}
 .closed {padding-top:0.5em;
 		 padding-left: 2em;
 		 padding-right: 2em;
-		 padding-bottom:0.5em;
-		 height:1.6em;
-		 background-color:#dc143c;
-		 font-style: italic;
+		 padding-bottom:0.2em;
+		 line-height: 2em;
+		 background-color:#fff;
 		 width: 620px;
 		}
+.closed > img {background-color: #fff;
+			   border: 1px solid black;
+			   padding: 2px;
+			   padding-right:4px;}
 
 .quote {color: #580}
 a.thread {color: #153; font-weight:bold}
