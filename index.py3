@@ -28,6 +28,12 @@ board_config = \
      ["t_limit", 100]]
 
 functions = ["main", "thread", "admin", "list", "create", "reply"]
+t_modes = {"0":"", \
+    "1":"<img src='./img/lock.png' alt='Lock'>", \
+    "2":"<img src='./img/sticky.png' alt='Sticky'>", \
+    "3":"Lock Sticky", \
+    "4":"<img src='./img/dead.png' alt='Nobump'>"}
+
 form = cgi.FieldStorage()
 
 def main():
@@ -62,8 +68,9 @@ def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='0ch.css' title='0ch'>")
-    print("<link rel='stylesheet' href='4x13.css' title='4x13'>")
+    print("<link rel='alternate stylesheet' href='4x13.css' title='4x13'>")
     print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
+    print("<script language='javascript' src='style.js'></script>")
     print("""<script language="javascript">
 function addText(elId,text) {
     text = ">>" + text + " \\r";
@@ -77,6 +84,8 @@ def bbs_admin():
 
 def bbs_main():
     print("<div class='front'>")
+    print("""[<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
+    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
     print("<h2>{0}</h2>".format(board_config[0][1]))
     bbs_list()
     print("<p><hr>")
@@ -101,7 +110,12 @@ def bbs_thread(t_id='', prev=0):
         with open(t_fn, "r") as the_thread:
             the_thread = the_thread.readlines()
             r_cnt = str(len(the_thread) - 1)
+            t_m = ''
             if prev == 0:
+                if "[<" in the_thread[0]:
+                    t_m = the_thread[0].split("[<")[1]
+                    the_thread[0] = the_thread[0].split("[<")[0]
+                    
                 print("<h3>", the_thread[0] + "[" + r_cnt + "]", "</h3>")
                 print("<div class='thread'>")
             p_n = 0
@@ -155,8 +169,11 @@ def bbs_thread(t_id='', prev=0):
                             
                 replies.append(reply)
             if prev == 0:
-                print("</div><br>")
-                if int(r_cnt) != board_config[7][1]:
+                print("</div>")
+                if t_m.strip() in ["1", "3"]:
+                    print(t_modes[t_m.strip()])
+                    print("This thread is locked. No more comments can be added.")
+                elif int(r_cnt) < board_config[7][1]:
                     bbs_reply(t_fn, t_id)
                 else:
                     print("<hr>No more replies; thread limit reached!")
@@ -194,13 +211,19 @@ def bbs_create():
                 + thread_attrs['ldt'] + " ><  >< " \
                 + thread_attrs['content'] + "\n" )
             print("Thread <i>{0}</i> posted successfully!".format(thread_attrs['title']))
-            print("<p>Redirecting you in 5 seconds...")
+        with open(board_config[5][1] + "ips.txt", "a") as log:
+            ip = os.environ["REMOTE_ADDR"]
+            # IP | location | filename | ldt | comment
+            log_data = " | ".join([ip, t_fn, thread_attrs['ldt'], \
+                                   thread_attrs['content']])
+            log.write(log_data)
+            print("Redirecting you in 5 seconds...")
             print("<meta http-equiv='refresh' content='5;.'")
         with open(board_config[6][1]) as t_list:
             t_list = t_list.read().splitlines()
             new_t = " >< ".join([thread_attrs['dt'], \
                 thread_attrs['ldt'], thread_attrs['title'], \
-                "1"])
+                    "1", "0"])
             t_list.insert(0, new_t)
         with open(board_config[6][1], "w") as upd_list:
             upd_list.write('\n'.join(t_list))
@@ -271,6 +294,9 @@ def do_reply():
         fale = 0
         with open(reply_attrs['t'], "r") as the_thread:
             ter = the_thread.read().splitlines()
+            if "[<" in ter[0]:
+                if ter[0].split("[< ")[1] in ["1", "3"]:
+                    fale = 3
             if (len(ter) - 1) >= board_config[7][1]:
                 fale = 1
             else:
@@ -278,13 +304,15 @@ def do_reply():
                 if ter[-1] == reply_string.split(' >< ')[-1][:-1]:
                     fale = 2
                 
-        with open(reply_attrs['t'], "a") as the_thread:
+        with open(reply_attrs['t'], "a+") as the_thread:
             if fale == 0:
                 the_thread.write(reply_string)
             elif fale == 1:
                 print("Sorry, thread limit reached!")
             elif fale == 2:
                 print("Sorry, you already posted that.")
+            elif fale == 3:
+                print("Sorry, the thread is locked.")
         with open(board_config[5][1] + "ips.txt", "a") as log:
             if fale == 0:
                 ip = os.environ["REMOTE_ADDR"]
@@ -300,20 +328,24 @@ def do_reply():
             t_list = t_list.read().splitlines()
             nt_list = []
             new_t = []
+            sage = 0
             for t in t_list:
                 t = t.split(' >< ')
                 nt_list.append(t)
                 if t[0] == t_line[0]:
+                    if t[4] in ["1", "3", "5"]:
+                        print("you should not be posting in a locked thread")
+                    if t_line[2] == "1" or t[4] is "4":
+                        sage = 1
+                    t_line.pop(2)
                     t_line.insert(2, t[2])
                     t_line.insert(3, str(int(t[3])+1))
+                    t_line.insert(4, t[4])
                     new_t = [' >< '.join(t), ' >< '.join(t_line)]
-            sage = 0
-            if new_t[1].split(" >< ")[4]:
-                new_t[1] = new_t[1][:-4]
-                sage = 1
+                    
             for n, t in enumerate(nt_list):
                 if t[0] == new_t[1].split(" >< ")[0]:
-                    if sage == 1:
+                    if sage == 1 or new_t[1].split(" >< ")[4] in ("3", "5"):
                         nt_list[n] = new_t[1].split(" >< ")
                         pass
                     else:
@@ -348,8 +380,17 @@ def do_prev(bbt=[]):
         else:
             bbn = 1
         with open(board_config[5][1] + str(bbt[1]) + ".txt") as t:
-            t_t = t.readline()
+            t_t = t.readline()[:-1]
             t_r = len(t.read().splitlines())
+
+        t_m = ''
+        if "[<" in t_t:
+            print(t_modes[t_t.split("[< ")[1]])
+            t_m = t_modes[t_t.split("[< ")[1]]
+            if t_m in t_modes.keys():
+                t_t = t_t.split(" [< ")[0] + t_m
+            else:
+                t_t = t_t.split(" [< ")[0]
         print("<a href='?m=thread;t={0}'>{1} [{2}]".format(bbt[1], t_t, len(bbt[0])))
         print("</a></h3>")
         for replies in bbt[0]:
@@ -360,7 +401,12 @@ def do_prev(bbt=[]):
             if pstcnt == 1 and len(bbt[0]) > 4:
                 print("<hr width='420px' align='left'>")
             elif pstcnt == len(bbt[0]):
-                if t_r != board_config[7][1]:
+                if "lock" in t_m:
+                    print("<br><div class='reply'>")
+                    print("<br><div class='closed'>", t_m)
+                    print("Thread locked. No more comments allowed")
+                    print("</div><br></div></div>")
+                elif t_r != board_config[7][1]:
                     print("<hr width='420px' align='left'>")
                     bbs_reply(board_config[5][1] + bbt[1]+".txt")
                 else:

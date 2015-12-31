@@ -1,0 +1,6 @@
+placeholder thread [< 1
+Anonymous >< 0 ><  >< Without any threads, the board bugs. Make sure to place your own settings in index.py3. 
+Regular user >< 0 ><  >< Bumping this thread without a tripcode.
+Regular user >< 0 >< 1 >< Not bumping this thread, without a tripcode.
+Regular user</span> <span class="trip"> !.7FhrQ4rjk >< 0 ><  >< Bumping with tripcode "test"
+</span> <span class="admin">Admin >< 0 ><  >< Posting with default admin password, stored in board_config in index.py3<br><br>&gt; Showing an example of a quote. <br>&gt; Quoting is green text, in blockquote format.<br>&gt; Text that is meant to be coded is placed after "&gt;"<br><br>&gt;&gt;1<br>Replying to post #1<br><br>&gt;&gt;2<br>Replying to post #2

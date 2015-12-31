@@ -1,0 +1,2 @@
+:)
+127.0.0.1 | ./threads/02.txt | Anonymous >< now >< 1 >< Example post to display in ./threads/ips.txt
