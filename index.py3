@@ -257,12 +257,17 @@ def bbs_list(prev='0'):
             print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
             if t[4] in t_modes.keys():
                 t[2] = t_modes[t[4]] + t[2]
-            print("</a><td><a href='#" \
-            + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
+            if prev == '1':
+                print("</a><td><a href='#" \
+                    + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
+            else:
+                print("</a><td><a href='?m=thread;t=" \
+                    + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
             cnt += 1
         if prev != "0":
-            print("<tr><td><td colspan='3'><a href='?m=list'>")
+            print("<tr><td><td colspan='2'><a href='?m=list'>")
             print("View all threads</a> ({0} hidden)".format(t_cnt - s_ts))
+            print("<td><a href='#create'>Create new thread</a>")
         print("</table>")
 
 def bbs_reply(t_fn='', t_id=''):
@@ -394,7 +399,7 @@ def do_reply():
 def do_prev(bbt=[]):
     if not bbt:
         with open(board_config[6][1]) as t_list:
-            t_list = t_list.read().splitlines()[:10]
+            t_list = t_list.read().splitlines()[:7]
             for n, t in enumerate(t_list):
                 t = t.split(" >< ")
                 bbs = bbs_thread(t[0], 1)
