@@ -31,7 +31,7 @@ functions = ["main", "thread", "admin", "list", "create", "reply"]
 t_modes = {"0":"", \
     "1":"<img src='./img/lock.png' alt='Lock'>", \
     "2":"<img src='./img/sticky.png' alt='Sticky'>", \
-    "3":"Lock Sticky", \
+    "3":"<img src='./img/sticky.png'><img src='./img/lock.png'>", \
     "4":"<img src='./img/dead.png' alt='Nobump'>"}
 
 form = cgi.FieldStorage()
@@ -87,7 +87,7 @@ def bbs_main():
     print("""[<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
     [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
     print("<h2>{0}</h2>".format(board_config[0][1]))
-    bbs_list()
+    bbs_list(prev='1')
     print("<p><hr>")
     do_prev()
     print("<hr>")
@@ -215,16 +215,20 @@ def bbs_create():
             ip = os.environ["REMOTE_ADDR"]
             # IP | location | filename | ldt | comment
             log_data = " | ".join([ip, t_fn, thread_attrs['ldt'], \
-                                   thread_attrs['content']])
+        thread_attrs['title'], thread_attrs['name'], thread_attrs['content']])
             log.write(log_data)
             print("Redirecting you in 5 seconds...")
             print("<meta http-equiv='refresh' content='5;.'")
-        with open(board_config[6][1]) as t_list:
+        with open(board_config[6][1], "r") as t_list:
             t_list = t_list.read().splitlines()
             new_t = " >< ".join([thread_attrs['dt'], \
                 thread_attrs['ldt'], thread_attrs['title'], \
                     "1", "0"])
-            t_list.insert(0, new_t)
+            for n, t in enumerate(t_list):
+                t = t.split(" >< ")
+                if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
+                    t_list.insert(n, new_t)
+                    break
         with open(board_config[6][1], "w") as upd_list:
             upd_list.write('\n'.join(t_list))
             
@@ -237,18 +241,28 @@ def bbs_create():
         with open("create.html") as c_thread:
             print(c_thread.read())
 
-def bbs_list():
+def bbs_list(prev='0'):
+    if prev == '0':
+        s_ts = None
+    else:
+        s_ts = 7
     with open(board_config[6][1]) as t_list:
         t_list = t_list.read().splitlines()
+        t_cnt = len(t_list)
         cnt = 1
         print("<table>")
-        print("<th> <th>Title <th>Posts <th>Last post")
-        for t in t_list:
-            print("<tr><td>{0}.".format(cnt))
+        print("<th>{0} <th>Title <th>Posts <th>Last post".format(t_cnt))
+        for t in t_list[:s_ts]:
             t = t.split(" >< ")
-            print("<td><a href='?m=thread;t=" \
+            print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
+            if t[4] in t_modes.keys():
+                t[2] = t_modes[t[4]] + t[2]
+            print("</a><td><a href='#" \
             + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
             cnt += 1
+        if prev != "0":
+            print("<tr><td><td colspan='3'><a href='?m=list'>")
+            print("View all threads</a> ({0} hidden)".format(t_cnt - s_ts))
         print("</table>")
 
 def bbs_reply(t_fn='', t_id=''):
@@ -313,6 +327,7 @@ def do_reply():
                 print("Sorry, you already posted that.")
             elif fale == 3:
                 print("Sorry, the thread is locked.")
+                
         with open(board_config[5][1] + "ips.txt", "a") as log:
             if fale == 0:
                 ip = os.environ["REMOTE_ADDR"]
@@ -329,33 +344,48 @@ def do_reply():
             nt_list = []
             new_t = []
             sage = 0
-            for t in t_list:
+            for n, t in enumerate(t_list):
                 t = t.split(' >< ')
                 nt_list.append(t)
                 if t[0] == t_line[0]:
-                    if t[4] in ["1", "3", "5"]:
+                    if len(t) is 4 and t[4] in ["1", "3"]:
                         print("you should not be posting in a locked thread")
-                    if t_line[2] == "1" or t[4] is "4":
+                        fale = 1
+                        break
+                    elif t_line[2] == "1" or t[4] in ("2", "4"):
                         sage = 1
                     t_line.pop(2)
                     t_line.insert(2, t[2])
                     t_line.insert(3, str(int(t[3])+1))
                     t_line.insert(4, t[4])
                     new_t = [' >< '.join(t), ' >< '.join(t_line)]
-                    
+
+            print("<hr>")
+            posted = 0
             for n, t in enumerate(nt_list):
-                if t[0] == new_t[1].split(" >< ")[0]:
-                    if sage == 1 or new_t[1].split(" >< ")[4] in ("3", "5"):
-                        nt_list[n] = new_t[1].split(" >< ")
-                        pass
+                if fale == 1:
+                    print("failure!")
+                    break
+                elif sage == 0:
+                    if posted == 0:
+                        if t[4] not in ["2", "3"]:
+                            nt_list.insert(n, new_t[1].split(" >< "))
+                            posted = 1
                     else:
-                        nt_list.remove(t)
-                        nt_list.insert(0, new_t[1].split(" >< "))
-                        pass
+                        if t == new_t[0].split(" >< "):
+                            nt_list.remove(t)
+                            break
+                else:
+                    if t[0] == new_t[0].split(" >< ")[0]:
+                        nt_list[n] = new_t[1].split(" >< ")
+                        break
+                
             for n, l in enumerate(nt_list):
                 nt_list[n] = " >< ".join(l)
-            with open(board_config[6][1], "w") as new_tl:
-                new_tl.write('\n'.join(nt_list))
+
+            if fale == 0:
+                with open(board_config[6][1], "w") as new_tl:
+                    new_tl.write('\n'.join(nt_list))
 
     else: 
         if not reply_attrs['comment']:
@@ -368,7 +398,7 @@ def do_prev(bbt=[]):
             for n, t in enumerate(t_list):
                 t = t.split(" >< ")
                 bbs = bbs_thread(t[0], 1)
-                print("<div class='thread'>")
+                print("<div class='thread'><a name={0}>".format(t[0]))
                 print("<h3><a>" + str(n+1)+".</a>")
                 do_prev([bbs, t[0]])
 

@@ -10,6 +10,7 @@ h2 {text-align:center}
 	     padding-left: 2.5%;
 		 padding-right: 2.5%;
 		 position:absolute;
+		 width: 95%;
 		 top:0;}
 body {margin:0;padding:0; background-color: #efefef}
 table {border-collapse: seperate;
