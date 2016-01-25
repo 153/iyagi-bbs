@@ -1,23 +1,27 @@
-### Welcome!
-This is an early version of 4x13's own BBS, *iyagi*.
-It works via a flatfile database and already has many features
-from textboards such as Shiichan and Kareha implemented. 
+<div class='thread' style='max-width:40em'>
+Affiliates: <a href="//tablecat.ipyo.heliohost.org/lounge/">
+Tablecat Lounge</a>
+<p>This is an early version of 4x13's own BBS, iyagi.
+You can browse the source code and follow updates / contribute 
+to the project <a href="//github.com/153/iyagi-bbs">on Github</a>.
 
-*iyagi* is public domain, which means that anyone can copy it
-and modify or use their copy of the script to their own ends.
-However, post here at your discretion, and consider whatever
-you post to be possibly subject to deletion. You can browse
-the source code and follow updates / contribute to the project
-[here](//github.com/153/iyagi-bbs).
+<p>Please <i>don't</i> spam or post illegal content. Please <i>do</i>
+talk about current events, technology, philosophy, everyday life, or
+similar topics; or, share music, videos, or links that might spark
+interesting conversation.
 
-Current features:
-- Thread creation, indexing, previews
-- Bumps/sages
-- [yt]youtube[/yt], [code]code[/code], [aa]ascii art[/aa]
-- Tripcodes, admin capcode
+<br><br>If your post gets eaten, try inputting your post into <a
+href="http://savanttools.com/unicode-entity">this tool</a>, and copy
+what it spits out into the reply box. For some reason, a random bug is
+getting triggered for some posts...
 
-Needs:
-- Sticky, Lock, Stickylock, Permasage
-- Admin panel, anti-spam
-- RSS feed
-- Alternate themes
+<p><a href="//tanasinn.info/wiki/A_Guide_to_Anonymous_Boards">
+This article</a> is a good introduction to this kind of board.
+
+<p><b>Formatting:</b> <ul>
+<li> [yt]youtube link[/yt] 
+<li> [code]code[/code]
+<li> [spoiler]spoiler[/spoiler]
+<li> >># at the front of a line to reply to a post #
+<li> > at the front of a line to quote
+</ul></div>

@@ -79,7 +79,56 @@ function addText(elId,text) {
     document.getElementById(elId).value += text;
 }
 </script>""")
-    
+ 
+    print("""<script>
+"use strict";
+function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
+r(function(){
+    if(!document.getElementsByClassName) {
+        // IE8 support
+        var getElementsByClassName = function(node, classname) {
+            var a = [];
+            var re = new RegExp('(^| )'+classname+'( |$)');
+            var els = node.getElementsByTagName("*");
+            for(var i=0,j=els.length; i<j; i++)
+                if(re.test(els[i].className))a.push(els[i]);
+            return a;
+        }
+        var videos = getElementsByClassName(document.body,"youtube");
+    }
+    else {
+        var videos = document.getElementsByClassName("youtube");
+    }
+
+    var nb_videos = videos.length;
+    for (var i=0; i<nb_videos; i++) {
+        // Based on the YouTube ID, we can easily find the thumbnail image
+        videos[i].style.backgroundImage = 'url(http://i.ytimg.com/vi/' + videos[i].id + '/mqdefault.jpg)';
+
+        // Overlay the Play icon to make it look like a video player
+        var play = document.createElement("div");
+        play.setAttribute("class","play");
+        videos[i].appendChild(play);
+
+        videos[i].onclick = function() {
+            // Create an iFrame with autoplay set to true
+            var iframe = document.createElement("iframe");
+            var iframe_url = "https://www.youtube.com/embed/" + this.id + "?autoplay=1&autohide=1";
+            if (this.getAttribute("data-params")) iframe_url+='&'+this.getAttribute("data-params");
+            iframe.setAttribute("src",iframe_url);
+            iframe.setAttribute("frameborder",'0');
+
+            // The height and width of the iFrame should be the same as parent
+            iframe.style.width  = this.style.width;
+            iframe.style.height = this.style.height;
+
+            // Replace the YouTube thumbnail with YouTube Player
+            this.parentNode.replaceChild(iframe, this);
+        }
+    }
+});
+</script>""")
+   
 def bbs_admin():
     a_pass = ''
     if form.getvalue('p'):
@@ -104,9 +153,12 @@ def bbs_admin():
 
 def bbs_main():
     print("<div class='front'>")
-    print("""[<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
+    print("""Styles: [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
     [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
+    print(" // [<a href='/wiki/'>wiki</a>]")
     print("<h2>{0}</h2>".format(board_config[0][1]))
+    with open('motd.txt', 'r') as motd:
+        print(motd.read())
     bbs_list(prev='1')
     print("<p><hr>")
     do_prev()
@@ -133,10 +185,14 @@ def bbs_thread(t_id='', prev=0):
             t_m = ''
             if prev == 0:
                 if "[<" in the_thread[0]:
-                    t_m = the_thread[0].split("[<")[1]
+                    t_m = the_thread[0].split("[<")[1].strip()
+                    if t_m in t_modes.keys():
+                        t_m = t_modes[t_m]
+                    else:
+                        t_m = ''
                     the_thread[0] = the_thread[0].split("[<")[0]
                     
-                print("<h3>", the_thread[0] + "[" + r_cnt + "]", "</h3>")
+                print("<h3>", t_m, the_thread[0] + "[" + r_cnt + "]", "</h3>")
                 print("<div class='thread'>")
             p_n = 0
             replies=[]
@@ -176,7 +232,16 @@ def bbs_thread(t_id='', prev=0):
                             reply[2] += "</code>"
                         reply[2] += "</p><div class='rmr'>Post shortened. " \
                             + "<a href='?m=thread;t={0}'>[".format(t_id) \
-                            + "View full thread]</a></div>" 
+                            + "View full thread]</a></div>"
+                    elif len(reply[2].split('<span class="youtube" ')) > 2:
+                        reply[2] = '<span class="youtube"'.join(reply[2].split('<span class="youtube"')[:2])
+                        if "<pre" and not "</pre>" in reply[2]:
+                            reply[2] += "</pre>"
+                        if "<code" and not "</code>" in reply[2]:
+                            reply[2] += "</code>"
+                        reply[2] += "</p><div class='rmr'>Post shortened. " \
+                            + "<a href='?m=thread;t={0}'>[".format(t_id) \
+                            + "View full thread]</a></div>"
                     elif len(reply[2]) > 850:
                         reply[2] = reply[2][:850]
                         if "<pre" and not "</pre>" in reply[2]:
@@ -313,7 +378,9 @@ def do_reply():
         if form.getvalue(key):
             reply_attrs[key] = form.getvalue(key)
     if reply_attrs['t'] and reply_attrs['comment']:
-        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).strip().replace('\r\n', "<br>").replace("<br><br><br><br>", "<br>")[:5000]
+        reply_attrs['comment'] = cgi.escape(reply_attrs['comment']).strip().replace('\r\n', "<br>")[:5000]
+#        reply_attrs['comment'] = reply_attrs['comment'].encode('utf-8', 'xmlcharrefreplace').decode()
+#        reply_attrs['comment'] = re.sub(r'(<br>{3,})', r'<br><br><br>', reply_attrs['comment'])
 #        reply_attrs['comment']
         if reply_attrs['name']:
             reply_attrs['name'] = \
@@ -345,7 +412,7 @@ def do_reply():
             if "[<" in ter[0]:
                 if ter[0].split("[< ")[1] in ["1", "3"]:
                     fale = 3
-            if (len(ter) - 1) >= board_config[7][1]:
+            elif (len(ter) - 1) >= board_config[7][1]:
                 fale = 1
             else:
                 ter = ter[-1].split(' >< ')
@@ -361,6 +428,8 @@ def do_reply():
                 print("Sorry, you already posted that.")
             elif fale == 3:
                 print("Sorry, the thread is locked.")
+            else:
+                print("Please clean ur html")
                 
         with open(board_config[5][1] + "ips.txt", "a") as log:
             if fale == 0:
@@ -479,15 +548,19 @@ def do_prev(bbt=[]):
 
 
 def do_format(urp=''):
-    urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?\[/yt\]', r'<iframe width="560" height="315" src="https://www.youtube.com/embed/\1" frameborder="0" allowfullscreen></iframe>', urp) 
-    urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<pre class="aa"><b>Ascii Art:</b><hr>\1</pre><p>', urp)
+    urp = urp.split('[yt]')
+    urp = urp[:3]
+    urp = '[yt]'.join(urp)
+    urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?=]*)?\[/yt\]', r'<div style="width:480; height:320" class="youtube" id="\1"></div>', urp)
+    Urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<pre class="aa"><b>Ascii Art:</b><hr>\1</pre><p>', urp)
     urp = re.sub(r'\[spoiler\](.*?)\[/spoiler\]', r'<span class="spoiler">\1</span>', urp)
+    urp = urp.split("<br>")
+    for n, l in enumerate(urp):
+        if l[:4] == '&gt;':
+            urp[n] = "<span class='quote'>" + l + "</span>"
+    urp = "<br>".join(urp)
+    urp = re.sub(r'(<br>{4,})', r'<br>', urp)
     urp = re.sub(r'\[code\](.*?)\[/code\]', r'<pre><b>Code:</b><hr><code>\1</code></pre><p>', urp)
-    urp = urp.split('<br>')
-    for num, line in enumerate(urp):
-        if line[:4] == "&gt;":
-            urp[num] = "<span class='quote'>"+line+"</span>"
-    urp = '<br>'.join(urp)        
     urp = urp.replace('&amp;', '&').encode('ascii', 'xmlcharrefreplace').decode()
     return urp
 
