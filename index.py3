@@ -26,24 +26,27 @@ board_config = \
      ["theme", "alpha"], \
      ["t_dir", "./threads/"], \
      ["t_list", "./threads/list.txt"], \
-     ["t_limit", 100]]
+     ["t_limit", 100], \
+     ["fb_url", "http://4x13.net/bbs/"], \
+     ["tz", ":00-08:00"]]
 
-functions = ["main", "thread", "admin", "list", "create", "reply"]
+functions = ["main", "thread", "admin", "list", "create", "reply", "atom"]
 
 t_modes = {"0":"", \
     "1":"<img src='./img/lock.png' alt='Lock'>", \
     "2":"<img src='./img/sticky.png' alt='Sticky'>", \
     "3":"<img src='./img/sticky.png'><img src='./img/lock.png'>", \
     "4":"<img src='./img/ghost.png' alt='Nobump'>"}
-
 form = cgi.FieldStorage()
 
 def main():
     select_func = form.getvalue('m')
+    if select_func == 'atom':
+        bbs_atom()
+        return
     bbs_header()
     if select_func:
         if select_func in functions:
-#            print("<h1>", select_func, "</h1>")
             print("<a href='.'>&lt;&lt; back</a><br>")
             print("----"*10, "<p>")
             if select_func == "admin":
@@ -71,6 +74,8 @@ def bbs_header():
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='0ch.css' title='0ch'>")
     print("<link rel='alternate stylesheet' href='4x13.css' title='4x13'>")
+    print("<link rel='alternate' type='application/atom+xml' title='threads' href='?m=atom;r=t'>")
+    print("<link rel='alternate' type='application/atom+xml' title='posts' href='?m=atom;r=p'>")
     print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
     print("<script language='javascript' src='style.js'></script>")
     print("""<script language="javascript">
@@ -132,7 +137,7 @@ r(function(){
 def bbs_admin():
     a_pass = ''
     if form.getvalue('p'):
-        a_pass = cgi.escape(form.getvalue('p'))
+        a_pass = tripcode(cgi.escape(form.getvalue('p')))[2:]
     if a_pass != board_config[3][1]:
         print("<form method='post' action='.'>")
         print("<b>Please enter your password.</b>")
@@ -142,6 +147,7 @@ def bbs_admin():
         print("</form>")
     else:
         print("<h2>Config</h2>")
+        print("welcome, user!", a_pass, "<p>")
         for confg in board_config:
             print(confg[0]+":", confg[1], "<br>")
         print("<h2>Last 40 posts</h2>")
@@ -330,7 +336,7 @@ def bbs_create():
         with open("create.html") as c_thread:
             print(c_thread.read())
 
-def bbs_list(prev='0'):
+def bbs_list(prev='0', rss=False):
     if prev == '0':
         s_ts = None
     else:
@@ -339,16 +345,22 @@ def bbs_list(prev='0'):
         t_list = t_list.read().splitlines()
         t_cnt = len(t_list)
         cnt = 1
-        print("<table>")
-        print("<th>{0} <th>Title <th>Posts <th>Last post".format(t_cnt))
+        if not rss:
+            print("<table>")
+            print("<th>{0} <th>Title <th>Posts <th>Last post".format(t_cnt))
+        else:
+            rss_list = []
         for t in t_list[:s_ts]:
             t = t.split(" >< ")
-            print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
+            if not rss:
+                print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
             if t[4] in t_modes.keys():
                 t[2] = t_modes[t[4]] + t[2]
             if prev == '1':
                 print("</a><td><a href='#" \
                     + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
+            elif rss:
+                rss_list.append(t)
             else:
                 print("</a><td><a href='?m=thread;t=" \
                     + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
@@ -362,12 +374,79 @@ def bbs_list(prev='0'):
             else:
                 print("<td colspan='3'>")
             print("<a href='#create'>Create new thread</a>")
+        elif rss:
+            return rss_list
         print("</table>")
 
 def bbs_reply(t_fn='', t_id=''):
     with open("reply.html") as r_thread:
         print(r_thread.read().format(t_fn, t_id))
 
+
+def bbs_atom(m='t'):
+    amode = form.getvalue('r')
+    if amode == 'p':
+        print("Content-type: application/atom+xml\r\n")
+        print('<?xml version="1.0" encoding="utf-8"?>')
+        print('<feed xmlns="http://www.w3.org/2005/Atom">')
+        print("<title>{0} latest posts</title>".format(board_config[0][1]))
+        print("<link rel='self' href='" + board_config[8][1] + "?m=atom;r=p' />")
+        print("<id>{0} posts</id>".format(board_config[8][1]))
+        isot = "%Y-%m-%dT%H:%M:00%z"
+        with open(board_config[5][1]+"ips.txt") as ip_l:
+            ip_l = ip_l.read().splitlines()[::-1]
+            l_upd = ip_l[0].split(" >< ")[1].replace(" ", "").replace(".", "-")
+            l_upd = re.sub(r'\[(.*?)\]', 'T', l_upd)
+            print("<updated>" + l_upd + board_config[9][1] + "</updated>")
+            for p in ip_l:
+                print("\n<entry>")
+                p = p.split(" >< ")
+                p = [p[0].split(" | ")[1], p[1], p[3]]
+                p[1] = p[1].replace(" ", "").replace(".", "-")
+                p[1] = re.sub(r'\[(.*?)\]', 'T', p[1])
+                p[1] += board_config[9][1]
+                p[0] = p[0].split("/")[-1].split(".")[0]
+                p_url = board_config[8][1] + "?m=thread;p=" + p[0]
+                print("<updated>" + p[1] + "</updated>")
+                print("<id>" + p_url + "#" + p[1] + "</id>")
+                print("<title>reply in thread", p_url + "</title>")
+                print("<link rel='alternate' href='" + p_url + "'/>")
+                p[2] = cgi.escape(p[2])
+                print("<content type='html'>", p[2], "</content>")
+                print("</entry>\n")
+            print("</feed>")
+    elif amode == 't':
+        print("Content-type: application/atom+xml\r\n")
+        print('<?xml version="1.0" encoding="utf-8"?>')
+        print('<feed xmlns="http://www.w3.org/2005/Atom">')
+        print("<title>{0} latest threads</title>".format(board_config[0][1]))
+        print("<link rel='self' href='" + board_config[8][1] + "?m=atom;r=t' />")
+        print("<id>{0}</id>".format(board_config[0][1]))
+        t_list = bbs_list('0', "1")
+        t_list.sort(key=lambda t_list:t_list[0])
+        upd = t_list[-1][0]
+        l_upd = time.localtime(int(upd))
+        isot = "%Y-%m-%dT%H:%M" + board_config[9][1]
+        l_upd = time.strftime(isot, l_upd)
+        print("<updated>" + l_upd + "</updated>")
+        for t in t_list[::-1]:
+            print("\n<entry>")
+            upd = time.localtime(int(t[0]))
+            t_url = board_config[8][1] + "?m=thread;t=" + t[0]
+            print("<updated>" + time.strftime(isot, upd) + "</updated>")
+            print("<id>" + t_url + "</id>")
+            print("<link rel='alternate' href='" + t_url + "' />")
+            print("<title>", cgi.escape(t[2]), "</title>")
+            with open(board_config[5][1] + t[0] + ".txt", "r") as tt:
+                tt = tt.read().splitlines()[1]
+                tt = " >< ".join(tt.split(" >< ")[3:])
+                tt = cgi.escape(tt)
+            print("<content type='html'>", tt, "</content>")
+            print("</entry>")
+        print("</feed>")
+    else:
+        bbs_header()
+        print(board_config[8])
 def bbs_foot():
     with open("foot.html") as b_foot:
         print(b_foot.read())
