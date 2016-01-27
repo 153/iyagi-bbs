@@ -406,7 +406,7 @@ def bbs_atom(m='t'):
                 p[1] = re.sub(r'\[(.*?)\]', 'T', p[1])
                 p[1] += board_config[9][1]
                 p[0] = p[0].split("/")[-1].split(".")[0]
-                p_url = board_config[8][1] + "?m=thread;p=" + p[0]
+                p_url = board_config[8][1] + "?m=thread;t=" + p[0]
                 print("<updated>" + p[1] + "</updated>")
                 print("<id>" + p_url + "#" + p[1] + "</id>")
                 print("<title>reply in thread", p_url + "</title>")
