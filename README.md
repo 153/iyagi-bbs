@@ -15,11 +15,14 @@ The script iyagi (이야기,  "chat") is still in a very early beta, but it curr
 - Thread posting
 - Thread indexing in a list
 - Thread replying with/without bumps (age/sage)
+- Atom feeds for recent threads / posts
 - Tripcodes (pseudo-registration)
+ - Admin password is a tripcode (hashed password)
 - 4x13 and 0ch themes, with styleswitcher
-- [spoiler], [code], [youtube], [aa] (ascii art) BBcode tags 
+- [spoiler], [code], [yt], [aa] (ascii art) BBcode tags 
+ - [yt] (youtube) is resource efficient through clever JS
 - very weak spam detection
-- Permasage, Lock, and Sticky
+- Permasage, Lock, and Sticky, with icons
 - Vanilla install
 
 ## 2. Screenshots
@@ -68,12 +71,10 @@ Moderation is currently done by managing text files in a directory; the default 
 If you want to lock a thread, change the last number in its row, in list.txt, to "1". To sticky, "2". To stickylock, "3". To kill, "4". Then, open the thread (its_unix_time.txt in ./threads/) and added "[<" followed by that same value to the title line. Clunky, but it works for now :) 
 
 ## 4. To-do 
-Here's what I'd like to add to bring iyagi to v1.0:
-- A proper thread index for the main page
+Here's what I'd like to add to bring iyagi to v1.5:
 - More stylesheets
 - Some kind of markup format - probably markdown derived
-- Admin panel, anti-spam filters
-- RSS list of threads
+- Better admin panel and anti-spam filters (regex spam list, IP-based bans, post deletion, thread mode editting)
 
 Possible bonus features:
 - User storable capcodes
