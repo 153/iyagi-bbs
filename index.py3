@@ -73,10 +73,11 @@ def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='0ch.css' title='0ch'>")
+    print("<link rel='stylesheet' href='mob.css' title='mob'>")
     print("<link rel='alternate stylesheet' href='4x13.css' title='4x13'>")
     print("<link rel='alternate' type='application/atom+xml' title='threads' href='?m=atom;r=t'>")
     print("<link rel='alternate' type='application/atom+xml' title='posts' href='?m=atom;r=p'>")
-    print("<meta name=viewport content='width=850px;initial-scale:device-width'>")
+    print("<meta name=viewport content='width=850px;initial-scale:auto'>")
     print("<script language='javascript' src='style.js'></script>")
     print("""<script language="javascript">
 function addText(elId,text) {
@@ -160,7 +161,8 @@ def bbs_admin():
 def bbs_main():
     print("<div class='front'>")
     print("""Styles: [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
-    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
+    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]
+    [<a href="javascript:setActiveStyleSheet('mob');">mob</a>]""")
     print(" // [<a href='/wiki/'>wiki</a>]")
     print("<h2>{0}</h2>".format(board_config[0][1]))
     with open('motd.txt', 'r') as motd:
@@ -220,8 +222,10 @@ def bbs_thread(t_id='', prev=0):
                     if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
                         reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
                             r'<a href="#\1">&gt;&gt;\1</a>', reply[2])
-                    reply[2] = do_format(reply[2])   
-                    print("</p><a name='{0}' href='#reply'".format(p_n))
+                    reply[2] = do_format(reply[2])
+                    if p_n > 1:
+                        print("</p>")
+                    print("<a name='{0}' href='#reply'".format(p_n))
                     print("onclick='addText(\"{1}\", \"{0}\")'".format(p_n, t_id))
                     print("'>#{0}</a> //".format(p_n))
                     print("Name: {0} :\n Date: {1} \n<p>{2}".format(*reply))
@@ -406,7 +410,7 @@ def bbs_atom(m='t'):
                 p[1] = re.sub(r'\[(.*?)\]', 'T', p[1])
                 p[1] += board_config[9][1]
                 p[0] = p[0].split("/")[-1].split(".")[0]
-                p_url = board_config[8][1] + "?m=thread;t=" + p[0]
+                p_url = board_config[8][1] + "?m=thread;p=" + p[0]
                 print("<updated>" + p[1] + "</updated>")
                 print("<id>" + p_url + "#" + p[1] + "</id>")
                 print("<title>reply in thread", p_url + "</title>")
@@ -608,7 +612,9 @@ def do_prev(bbt=[]):
         for replies in bbt[0]:
             pstcnt += 1
             if pstcnt == 1 or pstcnt >= bbn:
-                print("</p>#{0} //".format(pstcnt))
+                if pstcnt > bbn:
+                    print("</p>")
+                print("#{0} //".format(pstcnt))
                 print("Name: {0} \n: Date: {1} \n<p>{2}".format(*replies))
             if pstcnt == 1 and len(bbt[0]) > 4:
                 print("<hr width='420px' align='left'>")
@@ -630,7 +636,7 @@ def do_format(urp=''):
     urp = urp.split('[yt]')
     urp = urp[:3]
     urp = '[yt]'.join(urp)
-    urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?=]*)?\[/yt\]', r'<div style="width:480; height:320" class="youtube" id="\1"></div>', urp)
+    urp = re.sub(r'\[yt\]http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?=]*)?\[/yt\]', r'<div style="width:480; height:320" class="youtube" id="\1"></div><p>', urp)
     Urp = re.sub(r'\[aa\](.*?)\[/aa\]', r'<pre class="aa"><b>Ascii Art:</b><hr>\1</pre><p>', urp)
     urp = re.sub(r'\[spoiler\](.*?)\[/spoiler\]', r'<span class="spoiler">\1</span>', urp)
     urp = urp.split("<br>")

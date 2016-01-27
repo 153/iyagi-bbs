@@ -3,62 +3,63 @@
 	src: url('mona.tff');
 }
 
-pre {background-color: #eee; border:1px solid black; width: 45em;}
+pre {background-color: #eee; border:1px solid black;} #width: 45em;}
 pre > hr {width: 45em;}
 pre > b {font-size: 120%;}
 a {color:#153}
-body {padding:2% 5%; background-color:#e0e4e9; max-width: 850px;}
+body {padding:0 0; background-color:#ddd}
 table {border-collapse: seperate;
   border-spacing: 0;
-  border: 0px solid #000;}
+  border: 0px solid #000;
+  width: 100% !important}
 th {background-color: #444; color: #e4e4e4}
 td {background-color: #f4f4f4}
 th, td {border: 1px solid #000; 
-  padding: 3px;}
+	padding: 3px;
+       font-size: 160% !important}
+
+input {font-size: 140% !important}
+form {width: 100% !important}
 
 div.thread{
-  max-width: 680px;
-  padding-right: 28px;
-  padding-bottom: 0;
-  text-align: justify;
+    background-color: #222;
+    color: #eee;
+    padding: 4px;
   word-wrap: break-word;
   hyphens: auto;
-  border-right: 10px solid black;
+  width: 100%;
 }
 
-.front > .thread
-{  border-top: 5px solid black;
-  padding-top: 7px;	}
+.front > .thread {}
 
+div.thread > p {padding: 4%; color: black}
 
-hr {
-	max-width: 620px;
-	text-align: left;
-	margin-left: 0;
-}
+div.thread > a, h3 > a {color: #0b0}
 
-div.thread > p {padding-left: 4%; line-height: 1.6em}
+p { width: auto; background-color: #eee}
 
 div.thread > i {padding-left: 0%}
 
-.motd {background-color:white; 
-  padding-left: 30px; 
-  max-width:580px; 
+.motd {background-color:white;
+       width: 90%;
   border:1px dashed black
-  text-align: justify;}
+	     text-align: justify;
+  padding-right: 4%;}
 
-.reply {width: 800px; background-color:#e0e4e9; border: 0;
-		padding-bottom: 35px;}
+.reply {background-color:#e0e4e9; border: 0;
+	padding-top: 35px;
+	padding-bottom: 35px;}
 
-.bump {color: #153; font-weight: bold}
-.sage {color: #444; font-weight: bold; font-style: italic}
-.trip {color: #889; font-weight: normal}
-.admin{color: #0cc; font-weight: bold}
+td < .reply {font-size: 200% !important}
+
+.bump {color: #153; font-weight: bold; display: none}
+.sage {color: #444; font-weight: bold; display: none}
+.trip {color: #889; font-weight: normal; display: none}
+.admin{color: #0cc; font-weight: bold;}
 .rmr {padding-top:0.5em;
 	  padding-left: 2em;
-	  height: 1.4em;
-	  background-color:#ffc;
-	  font-style: italic;}
+	  font-size: 140%;
+	  background-color:#ffc;}
 
 .closed {padding-top:0.5em;
 		 padding-left: 2em;
@@ -77,7 +78,7 @@ div.thread > i {padding-left: 0%}
 a.thread {color: #153; font-weight:bold}
 .post {background-color: #f2f2f2}
 .aa {
-	   font-size-adjust:none;
+##	   font-size-adjust:none;
 	   background-color: #eee;
 	   border:1px solid black;
        white-space: pre}
