@@ -73,7 +73,6 @@ def bbs_header():
     print("Content-type: text/html\n")
     print("<title>{0}</title>".format(board_config[0][1]))
     print("<link rel='stylesheet' href='0ch.css' title='0ch'>")
-    print("<link rel='stylesheet' href='mob.css' title='mob'>")
     print("<link rel='alternate stylesheet' href='4x13.css' title='4x13'>")
     print("<link rel='alternate' type='application/atom+xml' title='threads' href='?m=atom;r=t'>")
     print("<link rel='alternate' type='application/atom+xml' title='posts' href='?m=atom;r=p'>")
@@ -151,18 +150,36 @@ def bbs_admin():
         print("welcome, user!", a_pass, "<p>")
         for confg in board_config:
             print(confg[0]+":", confg[1], "<br>")
+        print("<div class='front'>")
         print("<h2>Last 40 posts</h2>")
         with open(board_config[5][1]+"ips.txt") as ip_l:
             ip_l = ip_l.read().splitlines()
             ip_t = len(ip_l)
             for n, ip in enumerate(ip_l[-1:-41:-1]):
-                print("#"+str(ip_t - n), "<br>", cgi.escape(ip), "<p>")
+                ip = ip.split('|')
+                if len(ip) > 3:
+                    ip[2] = "|".join(ip[3:])
+                p_stuff = ip[2].split(' >< ')
+                if len(p_stuff) > 4:
+                    p_stuff[3] = " >< ".join(p_stuff[3:])
+                print("<div class='thread'><input type='checkbox'>")
+                print("#{0}:".format(ip_t - n))
+                print("<a href>edit</a> .")
+                print("<a href>delete</a> .")
+                print("<u style='color:red'>ban</u>")
+                print("<hr><table style='margin: auto'>")
+                print("<tr><td>thread:<td>", ip[1])
+                print("<tr><td>ip:<td>", ip[0])
+                print("<tr><td>name:<td>", cgi.escape(p_stuff[0]))
+                print("<tr><td>time:<td>", p_stuff[1])
+                print("</table>")
+                print("<hr><p>", do_format(p_stuff[3]))
+                print("</div><br><br>")
 
 def bbs_main():
     print("<div class='front'>")
     print("""Styles: [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
-    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]
-    [<a href="javascript:setActiveStyleSheet('mob');">mob</a>]""")
+    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
     print(" // [<a href='/wiki/'>wiki</a>]")
     print("<h2>{0}</h2>".format(board_config[0][1]))
     with open('motd.txt', 'r') as motd:
@@ -310,7 +327,7 @@ def bbs_create():
                 + thread_attrs['ldt'] + " ><  >< " \
                 + thread_attrs['content'] + "\n" )
             print("Thread <i>{0}</i> posted successfully!".format(thread_attrs['title']))
-        with open(board_config[5][1] + "ips.txt", "a") as log:
+        with open(board_config[5][1] + "ips2.txt", "a") as log:
             ip = os.environ["REMOTE_ADDR"]
             # IP | location | filename | ldt | comment
             log_data = " | ".join([ip, t_fn, thread_attrs['ldt'], \
@@ -350,7 +367,7 @@ def bbs_list(prev='0', rss=False):
         t_cnt = len(t_list)
         cnt = 1
         if not rss:
-            print("<table>")
+            print("<a name='tbox'></a><table>")
             print("<th>{0} <th>Title <th>Posts <th>Last post".format(t_cnt))
         else:
             rss_list = []
@@ -393,12 +410,12 @@ def bbs_atom(m='t'):
         print("Content-type: application/atom+xml\r\n")
         print('<?xml version="1.0" encoding="utf-8"?>')
         print('<feed xmlns="http://www.w3.org/2005/Atom">')
-        print("<title>{0} latest posts</title>".format(board_config[0][1]))
+        print("<title>{0}: 50 latest posts</title>".format(board_config[0][1]))
         print("<link rel='self' href='" + board_config[8][1] + "?m=atom;r=p' />")
-        print("<id>{0} posts</id>".format(board_config[8][1]))
+        print("<id>{0}#posts</id>".format(board_config[8][1]))
         isot = "%Y-%m-%dT%H:%M:00%z"
         with open(board_config[5][1]+"ips.txt") as ip_l:
-            ip_l = ip_l.read().splitlines()[::-1]
+            ip_l = ip_l.read().splitlines()[::-1][:50]
             l_upd = ip_l[0].split(" >< ")[1].replace(" ", "").replace(".", "-")
             l_upd = re.sub(r'\[(.*?)\]', 'T', l_upd)
             print("<updated>" + l_upd + board_config[9][1] + "</updated>")
@@ -410,7 +427,7 @@ def bbs_atom(m='t'):
                 p[1] = re.sub(r'\[(.*?)\]', 'T', p[1])
                 p[1] += board_config[9][1]
                 p[0] = p[0].split("/")[-1].split(".")[0]
-                p_url = board_config[8][1] + "?m=thread;p=" + p[0]
+                p_url = board_config[8][1] + "?m=thread;t=" + p[0]
                 print("<updated>" + p[1] + "</updated>")
                 print("<id>" + p_url + "#" + p[1] + "</id>")
                 print("<title>reply in thread", p_url + "</title>")
@@ -425,7 +442,7 @@ def bbs_atom(m='t'):
         print('<feed xmlns="http://www.w3.org/2005/Atom">')
         print("<title>{0} latest threads</title>".format(board_config[0][1]))
         print("<link rel='self' href='" + board_config[8][1] + "?m=atom;r=t' />")
-        print("<id>{0}</id>".format(board_config[0][1]))
+        print("<id>{0}#threads</id>".format(board_config[8][1]))
         t_list = bbs_list('0', "1")
         t_list.sort(key=lambda t_list:t_list[0])
         upd = t_list[-1][0]

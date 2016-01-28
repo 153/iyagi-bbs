@@ -1,8 +1,8 @@
-<div class='thread'>
+<div class='thread' id="motd">
 <br>
 Affiliates: <a href="//tablecat.ipyo.heliohost.org/lounge/">
 Tablecat Lounge</a> &diams; <img src='rss.png'> <a href='?m=atom;r=t'>Threads</a>
-/ <img src='rss.png'> <a href='?m=atom;r=p'>Posts</a><br><br><hr>
+/ <img src='rss.png'> <a href='?m=atom;r=p'>Posts</a><br><br>
 <br>This is an early version of 4x13's own BBS, iyagi.
 You can browse the source code and follow updates / contribute 
 to the project <a href="//github.com/153/iyagi-bbs">on Github</a>.
@@ -22,8 +22,8 @@ This article</a> is a good introduction to this kind of board.
 
 <br><br><b>Formatting:</b> <ul>
 <li> [yt]youtube link[/yt] 
-<li> [code]code[/code]
-<li> [spoiler]spoiler[/spoiler]
+<li> [code]<code>code</code>[/code]
+<li> [spoiler]<span class='spoiler'>spoiler</span>[/spoiler]
 <li> >># at the front of a line to reply to a post #
 <li> > at the front of a line to quote
 </ul>
