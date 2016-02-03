@@ -52,7 +52,6 @@ def main():
         bbs_atom()
         return
     bbs_header()
-    print(b_conf)
     if select_func:
         if select_func in functions:
             print("<a href='.'>&lt;&lt; back</a><br>")
