@@ -21,6 +21,10 @@ The script iyagi (이야기,  "chat") is still in a very early beta, but it curr
 - very weak spam detection
 - Permasage, Lock, and Sticky
 - Vanilla install
+- IP logging 
+- Atom feeds for recent posts / threads
+- Settings file (WIP)
+- Admin panel (WIP)
 
 ## 2. Screenshots
 <a href="https://i.imgur.com/yJztMga.png"><img src="https://i.imgur.com/yJztMgab.png"></a><a href="https://i.imgur.com/OTvViMn.png"><img src="https://i.imgur.com/OTvViMnb.png"></a>
