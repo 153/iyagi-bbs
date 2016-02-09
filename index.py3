@@ -52,6 +52,7 @@ def main():
         bbs_atom()
         return
     bbs_header()
+    print(b_conf)
     if select_func:
         if select_func in functions:
             print("<a href='.'>&lt;&lt; back</a><br>")
@@ -76,7 +77,6 @@ def main():
             
     if not select_func:
         bbs_main()
-
     bbs_foot()
 
 def bbs_header():
@@ -160,6 +160,7 @@ def bbs_thread(t_id='', prev=0):
     else:
         bbs_list()
         return
+    
     if os.path.isfile(t_fn):
         with open(t_fn, "r") as the_thread:
             the_thread = the_thread.readlines()
@@ -369,7 +370,6 @@ def bbs_reply(t_fn='', t_id=''):
     with open("./html/reply.html") as r_thread:
         print(r_thread.read().format(t_fn, t_id))
 
-
 def bbs_atom(m='t'):
     amode = form.getvalue('r')
     if amode == 'p':
@@ -468,10 +468,11 @@ def do_reply():
         local_dt = time.localtime()
         date_str = "%Y-%m-%d [%a] %H:%M"
         reply_attrs['ldt'] = time.strftime(date_str, local_dt)
-        reply_string = reply_attrs['name'] + " >< " \
-              + reply_attrs['ldt'] + " >< " \
-              + reply_attrs['bump'] + " >< " \
-              + reply_attrs['comment'] + "\n"
+
+        reply_string = " >< ".join([reply_attrs['name'], \
+                reply_attrs['ldt'], reply_attrs['bump'], \
+                reply_attrs['comment'] + "\n"])
+        
         fale = 0
         with open(reply_attrs['t'], "r") as the_thread:
             ter = the_thread.read().splitlines()

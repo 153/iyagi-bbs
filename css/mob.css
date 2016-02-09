@@ -1,0 +1,128 @@
+@font-face {
+	font-family: "mona";
+	src: url('mona.tff');
+}
+
+pre {background-color: #eee; border:1px solid black;} #width: 45em;}
+pre > hr {width: 45em;}
+pre > b {font-size: 120%;}
+a {color:#153}
+body {padding:0 0; background-color:#ddd}
+table {border-collapse: seperate;
+  border-spacing: 0;
+  border: 0px solid #000;
+  width: 100% !important}
+th {background-color: #444; color: #e4e4e4}
+td {background-color: #f4f4f4}
+th, td {border: 1px solid #000; 
+	padding: 3px;
+       font-size: 160% !important}
+
+input {font-size: 140% !important}
+form {width: 100% !important}
+
+div.thread{
+    background-color: #222;
+    color: #eee;
+    padding: 4px;
+  word-wrap: break-word;
+  hyphens: auto;
+  width: 100%;
+}
+
+.front > .thread {}
+
+div.thread > p {padding: 4%; color: black}
+
+div.thread > a, h3 > a {color: #0b0}
+
+p { width: auto; background-color: #eee}
+
+div.thread > i {padding-left: 0%}
+
+.motd {background-color:white;
+       width: 90%;
+  border:1px dashed black
+	     text-align: justify;
+  padding-right: 4%;}
+
+.reply {background-color:#e0e4e9; border: 0;
+	padding-top: 35px;
+	padding-bottom: 35px;}
+
+td < .reply {font-size: 200% !important}
+
+.bump {color: #153; font-weight: bold; display: none}
+.sage {color: #444; font-weight: bold; display: none}
+.trip {color: #889; font-weight: normal; display: none}
+.admin{color: #0cc; font-weight: bold;}
+.rmr {padding-top:0.5em;
+	  padding-left: 2em;
+	  font-size: 140%;}
+
+.closed {padding-top:0.5em;
+		 background: #000;
+		 height: 3em;
+		 width: 100%;
+		 margin: 0 auto auto;
+		 padding-left: 2em;
+		 padding-right: 2em;
+		 padding-bottom:0.2em;
+		 line-height: 2em;
+		 width: 620px;
+		}
+.closed > img {background-color: #fff;
+			   border: 1px solid black;
+			   padding: 2px;
+			   padding-right:4px;}
+
+.quote {color: #580}
+a.thread {color: #153; font-weight:bold}
+.post {background-color: #f2f2f2}
+.aa {
+##	   font-size-adjust:none;
+	   background-color: #eee;
+	   border:1px solid black;
+       white-space: pre}
+
+.spoiler, .spoiler > .quote {color: black; background-color:black !important}
+.spoiler:hover, .spoiler:hover > .quote {color: white; background-color: black !important}
+
+.youtube {
+    background-size: 480px 320px;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    transition: all 200ms ease-out;
+    cursor: pointer;
+    margin:9px auto;
+}
+
+iframe {
+    margin: 5px auto;
+    display:block;
+    background-position:center;
+}
+
+.youtube .play {
+    background:
+url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAERklEQVR4nOWbTWhcVRTHb1IJVoxGtNCNdal2JYJReC6GWuO83PM/59yUS3FRFARdFlwYP1CfiojQWt36sRCUurRIdVFXIn41lAoVdRGrG1M01YpKrWjiYmaSl8ybZJL3cd+YA//NLObd3++eO8x79z5jSq5Gw+8kov0AP8vMR5l1BtBZQM4B8ks75wCdZdYZZj5qLZ4hov2Nht9Z9vhKKSIaB/gI4M4w62KeAO6Mte4lYOq20FxrlqqOibhHmeWbvNC9ZfDX1mLae391aN6limO/gwgvAPJbWeAZuSDingdwXTBw7/0IsyaA/Fkh+KqOkD+YNfHej1QKD+y7iVlOhgLvFqFfNJvNGyuBJ+KDAF8MDd0tgS8y64OlgSdJMsysL4cG7SOHkyQZLhTee7+d2R2rAVy/S+Jd7/32ouBHAP4gNNRGQyTHc/84NhqNywZp5rvjjnnvt21aABFeCQ+RLwAf2hQ8s7sv9OCLk6AHNgQvIrvbfzKCD76g/O6cu7lf/iER/aQGgy448pExZmhdegAPhR9sObFWH1gT3lp7DaA/5bkIgJhZPgsNmz02novj+KqeApj1ubwXWe4kdyeznAgNvTpE/HQmvKqOMeuFogTUVQSRno+iaLRLAJF7uIgL9O4ubgL8aWgB7S44mNX+35YpICUiAvS9sBLkq1WzT+NFffl6AuoiApi6NT37h6sWkBIRZGkQ8YtLgyji6e1mBYTqCEBPG2Naz+0BWQgtoGoRgCzEsd9hAN1X5BfnFZASUfrSAFQNsyZ1FJASUVpHiLinDJG8U2cBZYogkrcNs5waBAGdstbeU9zdqpw0gPwwSAI6VUxHyFlDpOcHUUBBIuYNs14aZAE5RVwyzPr3/0EAEY0TyfGNjBWQvwZ+CTSbehfAH29mrID8bET0+0EUkAd8WYDOmqJ3ecsG30yr9wqRfm6Y+a1BEFDEjHfHvWmY9ck6CygHvBVr8Xhtb4ZE5HZA3y8DvBNA1TjnrmXWf+sioMwZX5V/VHXMGGMMoKdDCxCRvRWBdzKzdHEO+EisilbPyopHYqp6S9UCAsz4iojI7hUDAtyXVQgIDd6KnOoaWNkbI6FaPSuZGyMArsi7MZoloB4zviI/Nhr3X95jltwTRQmoIfgisy5ai+me67OI7fE4nrqjrqfK1t0eby0FPRB6oGVlchL3rgnfrq19RKbVBdhV9IOSwJmfmJi4vi/4ThERitwyCxVAFqydshuCX5awhQ9KtmuIWd8IDZED/nXT77rvVVv6sHRKwjYi91poqP7Dr+Y6JJ1VSZIMA3wkPNy6bX+o8Bcm0sXMdwM8Fxo0A3xORPaWBp6uPXsmbxCRD0NDL0dOANhVCXy6iAjMcjbcrMt3RITKwdMVRdFo+y5yvkL4eWZ+zHt/ZVD4dEVRNGotpst+dZZZH8k86lqn2pIvT/eqrNfn2xuyqYPZ8mv7s8pfn/8Pybm4TIjanscAAAAASUVORK5CYII=")
+no-repeat center center;
+    background-size: 64px 64px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: .8;
+    filter: alpha(opacity=80);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+.youtube .play:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}

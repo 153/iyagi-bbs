@@ -1,0 +1,40 @@
+#0 This is used in the header / RSS 
+Board name: iyagi bbs
+
+#1 Absolute path on the web 
+Board URL: /bbs/
+
+#2 Admin's displayed name
+Mod username: Admin
+
+#3 The tripcoded version of your password
+Mod pw: tyF/EWEkIY
+
+#4 Unused
+Theme: alpha
+
+#5 Relative, on disk
+Thread storage: ./threads/
+
+#6 Relative, on disk
+Thread list: list.txt
+
+#7 Maximum number of replies a thread can have
+# (suggested: 100 - 1000)
+Reply limit: 100
+
+#8 Used for the RSS
+Full board URL: http://127.0.0.1/bbs/
+
+#9 Used for the RSS
+Time zone: :00-0800
+
+#10, 11 Relative locations on disk
+Post IP log: ips.txt
+Thread IP log: ips2.txt
+
+#12 Threads to display on front page
+Show recent: 7
+
+#13 Replies to show in the front page's threads
+Show replies: 3
