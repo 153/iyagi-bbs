@@ -52,7 +52,6 @@ def main():
         bbs_atom()
         return
     bbs_header()
-    print(b_conf)
     if select_func:
         if select_func in functions:
             print("<a href='.'>&lt;&lt; back</a><br>")
@@ -238,7 +237,6 @@ def bbs_thread(t_id='', prev=0):
                         reply[2] += "</p><div class='rmr'>Post shortened. " +\
                             "<a href='?m=thread;t={0}'>".format(t_id) \
                             + "[View full thread]</a></div>"
-                    print(int(r_cnt))
                     show_r = b_conf[13][1]
                     if int(r_cnt) > show_r and p_n == int(r_cnt):
                         reply[2] = reply[2] + "</p><div class='rmr'>" \
