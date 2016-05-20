@@ -7,7 +7,8 @@ Board URL: /bbs/
 #2 Admin's displayed name
 Mod username: Admin
 
-#3 The tripcoded version of your password
+#3 The tripcoded version of your password.
+#  Use tripcode.py3 to generate this code.
 Mod pw: tyF/EWEkIY
 
 #4 Unused
@@ -17,11 +18,11 @@ Theme: alpha
 Thread storage: ./threads/
 
 #6 Relative, on disk
-Thread list: list.txt
+Thread list: ./list.txt
 
 #7 Maximum number of replies a thread can have
 # (suggested: 100 - 1000)
-Reply limit: 100
+Reply limit: 3
 
 #8 Used for the RSS
 Full board URL: http://127.0.0.1/bbs/

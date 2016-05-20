@@ -1,2 +1,0 @@
-To get started... [< 1
-null >< 0 ><  >< To get started, create a thread of your own, and delete "0*" in ./threads/ (00.txt, 01.txt, 02.txt) and trim list. Until an admin panel is made, moderate the board by editing files in /threads/.<br><br>IPs are logged in ./threads/ips.txt . If you want to ensure user privacy, make it so that ./threads/ requires a password to view from the web. This is dependent on your web daemon. :)
