@@ -35,22 +35,22 @@ It currently has the following features:
 <img src="https://i.imgur.com/yJztMgab.png">
 </a><a href="https://i.imgur.com/OTvViMn.png">
 <img src="https://i.imgur.com/OTvViMnb.png"></a>
-<p><i>Frontpage, in 0ch and 4x13 themes</i>
+<br><i>Frontpage, in 0ch and 4x13 themes</i><br>
 
-<a href="https://i.imgur.com/DxpsOl8.png">
+<br><a href="https://i.imgur.com/DxpsOl8.png">
 <img src="https://i.imgur.com/DxpsOl8m.png"></a>
-<p><i>A thread with no comments, showing off the reply window. "Bump" can 
-be unchecked, which preserves the thread's order in the index.</i>
+<br><i>A thread with no comments, showing off the reply window. "Bump" can 
+be unchecked, which preserves the thread's order in the index.</i><br>
 
-<a href="https://i.imgur.com/IR5zORs.png">
+<br><a href="https://i.imgur.com/IR5zORs.png">
 <img src="https://i.imgur.com/IR5zORsb.png"></a>
-<p><i>Ascii art, using [aa][/aa] tags (out for repairs)</i>
+<br><i>Ascii art, using [aa][/aa] tags (out for repairs)</i><br>
 
-<a href="https://i.imgur.com/8rDMdab.png">
+<br><a href="https://i.imgur.com/8rDMdab.png">
 <img src="https://i.imgur.com/8rDMdabm.png"></a>
-<p><i>Code, using [code][/code] tags </i>
+<br><i>Code, using [code][/code] tags </i><br>
 
-<a href="https://i.imgur.com/1yy0OCd.png">
+<br><a href="https://i.imgur.com/1yy0OCd.png">
 <img src="https://i.imgur.com/1yy0OCdb.png"></a>
 <a href="https://i.imgur.com/ktSWd3u.png">
 <img src="https://i.imgur.com/ktSWd3ub.png"></a>
