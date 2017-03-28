@@ -35,25 +35,31 @@ It currently has the following features:
 <img src="https://i.imgur.com/yJztMgab.png">
 </a><a href="https://i.imgur.com/OTvViMn.png">
 <img src="https://i.imgur.com/OTvViMnb.png"></a>
-<br><i>Frontpage, in 0ch and 4x13 themes</i>
+<p><i>Frontpage, in 0ch and 4x13 themes</i>
 
 <a href="https://i.imgur.com/DxpsOl8.png">
 <img src="https://i.imgur.com/DxpsOl8m.png"></a>
-<br>
-<i>A thread with no comments, showing off the reply window. "Bump" can 
+<p><i>A thread with no comments, showing off the reply window. "Bump" can 
 be unchecked, which preserves the thread's order in the index.</i>
 
 <a href="https://i.imgur.com/IR5zORs.png">
 <img src="https://i.imgur.com/IR5zORsb.png"></a>
-<br><i>Ascii art, using [aa][/aa] tags (out for repairs)</i>
+<p><i>Ascii art, using [aa][/aa] tags (out for repairs)</i>
 
 <a href="https://i.imgur.com/8rDMdab.png">
 <img src="https://i.imgur.com/8rDMdabm.png"></a>
-<br><i>Code, using [code][/code] tags </i>
+<p><i>Code, using [code][/code] tags </i>
 
-<a href="https://i.imgur.com/1yy0OCd.png"><img src="https://i.imgur.com/1yy0OCdb.png"></a><a href="https://i.imgur.com/ktSWd3u.png"><img src="https://i.imgur.com/ktSWd3ub.png"></a><a href="https://i.imgur.com/EoyS473.png"><img src="https://i.imgur.com/EoyS473m.png"></a>
+<a href="https://i.imgur.com/1yy0OCd.png">
+<img src="https://i.imgur.com/1yy0OCdb.png"></a>
+<a href="https://i.imgur.com/ktSWd3u.png">
+<img src="https://i.imgur.com/ktSWd3ub.png"></a>
+<br><a href="https://i.imgur.com/EoyS473.png">
+<img src="https://i.imgur.com/EoyS473m.png"></a><br>
 
-Locked, stickied, dead threads. Locked threads cannot be posted in, stickied threads always stay at the top of the board, dead threads cannot be bumped.
+Locked, stickied, dead threads. Locked threads cannot be posted in, 
+stickied threads always stay at the top of the board, dead threads 
+cannot be bumped.
 
 ## 3. Installation
 Installation couldn't be easier. Just download the repo and give the BBS 
@@ -88,6 +94,8 @@ followed by that same value to the title line.
 Clunky, but it works for now :) 
 
 ## 4. To-do 
+Your comments/contributions would be appreciated 
+
 Here's what I'd like to bring to future versions of IYAGI
 - More stylesheets
 - better refactoring 
