@@ -74,10 +74,11 @@ def bbs_header():
 
 def bbs_main():
     print("<div class='front'>")
-    print("""Styles:
-      [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
-      [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
-    print(f"<h2><a href='#tbox'>&#9632; </a>{conf[0]}</h2>")
+    print("""Styles: 
+    [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
+    [<a href="javascript:setActiveStyleSheet('7ch');">7ch</a>]
+    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
+    print(f"<h2><a href='#tbox'>&#9632;</a> {conf[0]}</h2>")
     with open('./html/motd.html', 'r') as motd:
         print(motd.read())
     bbs_list(1)
@@ -157,15 +158,17 @@ def bbs_thread(t_id='', prev=0):
                 print(", ".join([aref.format(r) \
                             for r in bld[str(p_n)]]))
                 print("</div>")
-            print("</div>")
-            print("<p>", reply[2], "</p></div>")
+            print("</div><div class='comment'>")
+            print("<p>", reply[2], "</p></div></div>")
 
         # Viewing preview on front page
         else:
             if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
-                reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
-                                    f'<a href="?m=thread;t={t_id}#\1">' \
-                                  + '&gt;&gt;\1</a>', reply[2])
+                reply[2] = re.sub(r'&gt;&gt;([\d]+)', 
+                                  r'<a href="?m=thread;t={0}#\1">'\
+                                    .format(t_id) + r'&gt;&gt;\1</a>',
+                                  reply[2])
+                                  
             reply[2] = do_format(reply[2])
             if len(reply[2].split('<br>')) > 8:
                 reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850]
@@ -214,14 +217,15 @@ def bbs_thread(t_id='', prev=0):
         print("This thread is locked. Reply limit hit.")
         print("</div>")
     elif prev == 0:
-            bbs_reply(t_fn, t_id)
+        bbs_reply(t_fn, t_id)
     return replies
 
             
 def bbs_create(prev=0):
     thread_attrs = {'title':'', 'name':'', 'content':''}
     thread_attrs = {k: wt.get_form(k) for k in thread_attrs.keys()}
-    if wt.get_form('m') == "create" and None in [thread_attrs['title'], thread_attrs['content']]:
+    if wt.get_form('m') == "create" \
+       and None in [thread_attrs['title'], thread_attrs['content']]:
         if not thread_attrs['title']:
             print("You need to enter a title to post a new thread.<br>")
         if not thread_attrs['content']:
@@ -233,10 +237,10 @@ def bbs_create(prev=0):
         with open("./html/create.html") as c_thread:
             print(c_thread.read())
         return
+    
     thread_attrs['title'] = thread_attrs['title'][:30].strip()
     if thread_attrs['name']:
-        thread_attrs['name'] = \
-            thread_attrs['name'][:18].strip()
+        thread_attrs['name'] = thread_attrs['name'][:18].strip()
         if '#' in thread_attrs['name']:
             namentrip = thread_attrs['name'].split('#')[:2]
             namentrip[1] = tripcode(namentrip[1])
@@ -259,25 +263,27 @@ def bbs_create(prev=0):
     with open(conf[11], "a") as log:
         ip = os.environ["REMOTE_ADDR"]
         # IP | location | filename | ldt | comment
-        log_data = " | ".join([ip, t_fn, ldt,
-                               thread_attrs['title'],
-                               thread_attrs['name'],
+        log_data = " | ".join([ip, t_fn, ldt, thread_attrs['name'],
+                               thread_attrs['title'], 
                                thread_attrs['content']])
         log.write(log_data)
-        print("Redirecting you in 5 seconds..."
-              "<meta http-equiv='refresh' content='5;.'")
+        print("Redirecting you in 5 seconds...", wt.redirect())
+
+    new_t = " >< ".join([dt, ldt, thread_attrs['title'], "1", "0"])
+    # load list.txt
     with open(conf[6], "r") as t_list:
         t_list = t_list.read().splitlines()
-        new_t = " >< ".join([dt, ldt, thread_attrs['title'], "1", "0"])                
-        for n, t in enumerate(t_list):
-            t = t.split(" >< ")
-            if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
-                t_list.insert(n, new_t)
-                break
-            else:
-                pass
+
+    for n, t in enumerate(t_list):
+        t = t.split(" >< ")
+        print(t, len(t), t[4])
+        if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
+            t_list.insert(n, new_t)
+            break
         else:
-            t_list.insert(0, new_t)
+            pass
+    else:
+        t_list.insert(len(t_list), new_t)
     with open(conf[6], "w") as upd_list:
         upd_list.write('\n'.join(t_list))
 
@@ -319,10 +325,10 @@ def bbs_list(prev=0, rss=False):
     print("<tr><td>")
     if prev and (t_cnt - s_ts) > 0:
         print("<td colspan='2'>")
-        print("<a href='?m=list'>View all threads</a> ({t_cnt - s_ts} hidden)<td>")
+        print(f"<a href='?m=list'>View all threads</a> ({t_cnt - s_ts} hidden)<td>")
     else:
         print("<td colspan='3'>")
-        print("<a href='#create'>Create new thread</a>")
+    print("<a href='#create'>Create new thread</a>")
     print("</table>")
 
 def bbs_reply(t_fn='', t_id=''):
@@ -460,8 +466,7 @@ def do_reply():
         if ter[-1] == reply_string.split(' >< ')[-1][:-1]:
             fale = 2
 
-    f_mesg = {
-        1:"Sorry, thread limit reached.",
+    f_mesg = {1:"Sorry, thread limit reached.",
         2:"Sorry, you already posted that.",
         3:"Sorry, the thread is locked."}
 
@@ -497,7 +502,7 @@ def do_reply():
         t = t.split(' >< ')
         nt_list.append(t)
         if t[0] == t_line[0]:
-            if len(t) is 4 and t[4] in ["1", "3"]:
+            if t[4] in ["1", "3"]:
                 print("you should not be posting in a locked thread")
                 return None
             elif t_line[2] == "1" or t[4] in ("2", "4"):
@@ -568,7 +573,8 @@ def do_prev(bbt=[]):
         if pstcnt == 1 or pstcnt >= bbn:
             print("<div class='reply'><div class='title'>")
             print("#{0} //".format(pstcnt))
-            print("Name: {0} \n: Date: {1} \n</div><p>{2}".format(*replies))
+            print("Name: {0} \n: Date: {1} \n</div>"
+                  "<div class='comment'>{2}</div>".format(*replies))
         elif pstcnt == (bbn - 1):
             print("<hr>")    
     if "lock" in t_m or t_r >= conf[7]:
@@ -578,6 +584,7 @@ def do_prev(bbt=[]):
         No more comments allowed
         </div><br></div></div>""".format(t_m))
     elif t_r < conf[7]:
+        print("<p>")
 #        print("<hr width='420px' align='left'>")
         bbs_reply(conf[5] + bbt[1]+".txt")
 

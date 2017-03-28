@@ -1,0 +1,126 @@
+/*
+ * based on sageru's 7chan.css for kareha,
+ * based on 7chan, based on burichan,
+ * modified for iyagi (public domain)
+ */
+
+
+body {
+    color: black;
+    background-color: #eef2ff;
+    padding: 8px;
+}
+
+a, a:visited {
+    color: #34345c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.front {
+    background: #d6daf0 none repeat scroll 0 0;
+    clear: both;
+    color: black;
+    padding: 4px;
+}
+
+.front > h2, .front > .rmr {
+    text-align:center;
+    clear: both;
+}
+
+.front table {
+    border-collapse: collapse;
+    border: 2px solid black;
+    margin: auto;
+    clear: both;
+}
+
+.front table th {
+    background-color: #34345c;
+    color: #eee;
+}
+
+.front table td {
+    background: #eef2ff;
+    padding: 4px;
+    border: 2px solid black;
+}
+
+
+.thread {
+    background: #eef2ff;
+    padding: 4px;
+    margin-bottom: 2em;
+    clear: both;
+    color: black;
+}
+
+.thread h3, .thread h3 a {
+    display: inline-box;
+    color: #CC1105;
+    text-decoration: none;
+    float: left;
+    background-color: #d6daf0;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 0 0 1em;
+    padding: 0;
+}
+
+.reply, #motd {
+    clear: both;
+    margin: 3px;
+    padding: 3px;
+}
+
+.thread .reply {
+    margin: 0 0 0.5em 0;
+}
+
+.title a {
+    text-decoration: none
+    font-weight: bold;
+    color: black;
+}
+
+.comment {
+    margin: 0.5em 0 0 3em;
+}
+
+.bump {
+    color: black;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.sage {
+    text-decoration: underline;
+    color: #34345c;
+    font-weight: bold;
+    font-size: .9em;
+}
+
+.rmr {
+    padding-top:0.5em;
+    padding-left: 2em;
+    max-width: 600px;
+    padding-bottom: 0.5em;
+    border: 2px dotted #888;
+    background-color:#ffc;
+    font-style: italic;
+}
+
+.bl {
+    border: 1px dashed #777;
+    margin-top: 8px;
+    margin-left: 12px;
+    padding: 12px;
+    padding-left: 13px;
+    max-width: 410px;
+    font-size: small;
+    background-color: #ccc;
+}
