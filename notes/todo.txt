@@ -1,0 +1,12 @@
+todo
+
+- refactor post formatting / markup
+- make more HTML/ATOM templates
+- add in blacklist aka wordfilter
+- add custom date format
+- use unix dates rather than ISO 8601
+- migrate to settings dictionary
+- create setup wizard
+- recruit designers
+- mobile theme
+- poster ID feature ? 

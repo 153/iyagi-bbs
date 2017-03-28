@@ -7,7 +7,7 @@ pre {background-color: #eee; border:1px solid black; width: 45em;}
 pre > hr {width: 45em;}
 pre > b {font-size: 120%;}
 a {color:#153}
-body {padding:2% 5%; background-color:#e0e4e9; max-width: 850px;}
+body {padding:2% 5%; background-color:#e0e4e9; max-width: 890px;}
 table {border-collapse: seperate;
   border-spacing: 0;
   border: 0px solid #000;}
@@ -16,7 +16,7 @@ td {background-color: #f4f4f4}
 th, td {border: 1px solid #000; 
   padding: 3px;}
 
-div.thread{
+.thread{
   max-width: 680px;
   padding-right: 28px;
   padding-bottom: 0;
@@ -25,11 +25,24 @@ div.thread{
   hyphens: auto;
   border-right: 10px solid black;
 }
+a.thread {color: #153; font-weight:bold}
+.thread > i {padding-left: 0%;border-bottom: 1px solid black}
+.front > .thread{
+    border-top: 5px solid black;
+    padding-top: 7px;
+}
 
-.front > .thread
-{  border-top: 5px solid black;
-  padding-top: 7px;	}
 
+.bl {
+    border: 1px dashed #777;
+    margin-top: 8px;
+    margin-left: 12px;
+    padding: 12px;
+    padding-left: 13px;
+    max-width: 410px;
+    font-size: small;
+    background-color: #ccc;
+}
 
 hr {
 	max-width: 620px;
@@ -37,53 +50,79 @@ hr {
 	margin-left: 0;
 }
 
-div.thread > p {padding-left: 4%; line-height: 1.6em}
 
-div.thread > i {padding-left: 0%}
 
-.motd {background-color:white; 
-  padding-left: 30px; 
-  max-width:580px; 
-  border:1px dashed black
-  text-align: justify;}
+.title {width:100%; overflow: visible}
 
-.reply {width: 800px; background-color:#e0e4e9; border: 0;
-		padding-bottom: 35px;}
+.motd {
+    background-color:white; 
+    padding-left: 30px; 
+    max-width:580px; 
+    border:1px dashed black;
+    text-align: justify;
+}
+
+.reply {
+    width: 800px;
+    background-color:#e0e4e9;
+    border: 0;
+    padding-left: 6%;
+    max-width: 550px;
+    padding-bottom: 35px;
+}
+
+.reply > p {padding-left: 4%; line-height: 1.6em}
 
 .bump {color: #153; font-weight: bold}
 .sage {color: #444; font-weight: bold; font-style: italic}
 .trip {color: #889; font-weight: normal}
 .admin{color: #0cc; font-weight: bold}
 .rmr {padding-top:0.5em;
-	  padding-left: 2em;
-	  height: 1.4em;
-	  background-color:#ffc;
-	  font-style: italic;}
+      padding-left: 1em;
+      max-width: 420px;
+      #     height: 1.4em;
+      padding-bottom: 1.3em;
+      background-color:#ffc;
+      font-style: italic;}
 
-.closed {padding-top:0.5em;
-		 padding-left: 2em;
-		 padding-right: 2em;
-		 padding-bottom:0.2em;
-		 line-height: 2em;
-		 background-color:#fff;
-		 width: 620px;
-		}
-.closed > img {background-color: #fff;
-			   border: 1px solid black;
-			   padding: 2px;
-			   padding-right:4px;}
+.closed {
+    padding-left: 4%;
+    max-width: 420px;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom:0.2em;
+    line-height: 2em;
+    background-color: #e3ea28;
+}
+
+.closed img {
+    background-color:#ffa;
+    padding: 12px;
+    margin: 4px;
+	    }
 
 .quote {color: #580}
-a.thread {color: #153; font-weight:bold}
 .post {background-color: #f2f2f2}
 .aa {
-	   font-size-adjust:none;
-	   background-color: #eee;
-	   border:1px solid black;
-       white-space: pre}
+    font-size-adjust:none;
+    background-color: #eee;
+    border:1px solid black;
+    white-space: pre;
+}
 
-.spoiler, .spoiler > .quote {color: black; background-color:black !important}
-.spoiler:hover, .spoiler:hover > .quote {color: white; background-color: black !important}
+.spoiler, .spoiler > .quote {
+    color: black;
+    background-color:black !important;
+}
+
+.spoiler:hover, .spoiler:hover > .quote {
+    color: white; background-color: black !important
+}
+
+/* 
+Youtube follows
+messy
+ */
 
 .youtube {
     background-size: 480px 320px;
@@ -123,3 +162,4 @@ no-repeat center center;
     opacity: 1;
     filter: alpha(opacity=100);
 }
+

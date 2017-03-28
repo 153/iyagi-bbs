@@ -1,0 +1,27 @@
+* head
+** title
+** stylesheet
+** atom feed
+** javascript 
+
+* body
+** div.front
+*** styles
+*** h2
+*** div.thread#motd
+    On the front page of a board, show a pane for
+    general news / info / links
+
+*** div.thread
+**** anchor
+**** h3 title
+**** div.reply
+     One for each comment in a thread 
+
+***** div.title 
+      (#, name, date)
+
+***** p  (post content)
+**** div.reply
+***** input (name, bump, comment)
+

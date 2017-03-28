@@ -1,0 +1,28 @@
+* settings
+** settings.txt / set.txt
+
+* script modes
+** main thread list create reply atom
+
+* thread modes
+** none lock sticky stickylock nobump
+
+* main
+** get function
+*** atom if atom
+** header
+** function if function
+** foot
+
+* thread
+** get thread id
+** if not thread:
+   list
+** open thread
+** set mode
+** if not preview: backlink.do_backlink()
+** for replies:
+*** set reply mode
+*** if not preview do backlinks
+*** else do previewed replies
+** if lock / postlimit dont reply

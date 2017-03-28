@@ -9,7 +9,8 @@ Mod username: Admin
 
 #3 The tripcoded version of your password.
 #  Use tripcode.py3 to generate this code.
-Mod pw: tyF/EWEkIY
+# default is test.
+Mod pw: .CzKQna1OU
 
 #4 Unused
 Theme: alpha
@@ -22,7 +23,7 @@ Thread list: ./list.txt
 
 #7 Maximum number of replies a thread can have
 # (suggested: 100 - 1000)
-Reply limit: 3
+Reply limit: 100
 
 #8 Used for the RSS
 Full board URL: http://127.0.0.1/bbs/
@@ -35,7 +36,7 @@ Post IP log: ips.txt
 Thread IP log: ips2.txt
 
 #12 Threads to display on front page
-Show recent: 7
+Show recent: 5
 
 #13 Replies to show in the front page's threads
 Show replies: 3

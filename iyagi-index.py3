@@ -17,16 +17,8 @@ cgitb.enable()
 # should be 10 letters long, the result of an 8 character secure password
 # that you know others can't guess easily.
 
-# list(conf) settings are:
-# 0 - name, 1 - web path, 2 - admin name,
-# 3 - mod pw hash, 5 - thread storage,
-# 6 - thread list, 7 - reply limit,
-# 8 - full web path, # 9 - timezone
-# 10 - post IPs log, # 11 - thread IP log
-# 12 - threads to show, # 13 - replies to show
-
 with open(settings, "r") as settings:
-    conf = []
+    b_conf = []
     settings = settings.read().splitlines()
     for s in settings:
         if len(s) == 0 or s[0] == "#" or ": " not in s:
@@ -40,7 +32,7 @@ with open(settings, "r") as settings:
             s[1] = int(s[1])
         except:
             pass
-        conf.append(s[1])
+        b_conf.append(s[1])
 
 f = {"main":"bbs_main()", "thread":"bbs_thread()",
      "list":"bbs_list()", "create":"bbs_create()",
@@ -70,17 +62,16 @@ def main():
 
 def bbs_header():
     with open("./html/head.html", "r") as head:
-        print(head.read().format(conf[0]))
+        print(head.read().format(b_conf[0]))
 
 def bbs_main():
     print("<div class='front'>")
-    print("""Styles:
-      [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
-      [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
-    print(f"<h2><a href='#tbox'>&#9632; </a>{conf[0]}</h2>")
+    print("""Styles: [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
+    [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
+    print("<h2>{0}</h2>".format(b_conf[0]))
     with open('./html/motd.html', 'r') as motd:
         print(motd.read())
-    bbs_list(1)
+    bbs_list(prev='1')
     print("<p><hr>")
     do_prev()
     print("<hr>")
@@ -92,16 +83,16 @@ def bbs_thread(t_id='', prev=0):
         t_id = wt.get_form('t')
     if t_id:
         if t_id.isdigit():
-            t_fn = conf[5] + t_id + ".txt"
+            t_fn = b_conf[5] + t_id + ".txt"
         else:
-            bbs_list(0)
+            bbs_list()
             return
     else:
-        bbs_list(0)
+        bbs_list()
         return
     
     if not os.path.isfile(t_fn):
-        bbs_list(0)
+        bbs_list()
         return
     
     with open(t_fn, "r") as the_thread:
@@ -115,13 +106,13 @@ def bbs_thread(t_id='', prev=0):
         else:
             t_m = ''
         the_thread[0] = the_thread[0].split("><")[0]
-    elif int(r_cnt) >= conf[7]:
+    elif int(r_cnt) >= b_conf[7]:
         t_m = t_modes['1']
     bld = {}
     if prev == 0:
         bld = backlink.do_backlink(t_id)
         print("<div class='thread'>")
-        print(f"<h3> {t_m} {the_thread[0]} [{r_cnt}]</h3>")
+        print("<h3>", t_m, the_thread[0] + "[" + r_cnt + "]", "</h3>")
     p_n = 0
     replies=[]
     for reply in the_thread[1:]:
@@ -131,13 +122,13 @@ def bbs_thread(t_id='', prev=0):
             reply[3] = " >< ".join(reply[3:])
         if reply[2]:
             reply.pop(2)
-            reply[0] = f"<span class='sage'>{reply[0]}</span>"
-
+            reply[0] = "<span class='sage'>" \
+                        + reply[0] + "</span>"
         else:
             reply.pop(2) #30c
-            reply[0] = f"<span class='bump'>{reply[0]}</span>"
-
-        # Viewing thread in threadview
+            reply[0] = "<span class='bump'>" \
+                            + reply[0] + "</span>"
+                
         if prev == 0:
             if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
                 reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
@@ -160,12 +151,10 @@ def bbs_thread(t_id='', prev=0):
             print("</div>")
             print("<p>", reply[2], "</p></div>")
 
-        # Viewing preview on front page
         else:
             if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
                 reply[2] = re.sub(r'&gt;&gt;([\d]+)', \
-                                    f'<a href="?m=thread;t={t_id}#\1">' \
-                                  + '&gt;&gt;\1</a>', reply[2])
+                                    r'<a href="?m=thread;t={0}#\1">&gt;&gt;\1</a>'.format(t_id), reply[2])
             reply[2] = do_format(reply[2])
             if len(reply[2].split('<br>')) > 8:
                 reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850]
@@ -173,33 +162,32 @@ def bbs_thread(t_id='', prev=0):
                     reply[2] += "</pre>"
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
-                reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += f"<a href='?m=thread;t={t_id}'>["
-                reply[2] += "View full thread]</a></div>"
+                reply[2] += "</p><div class='rmr'>Post shortened. " \
+                                        + "<a href='?m=thread;t={0}'>[".format(t_id) \
+                            + "View full thread]</a></div>"
             elif len(reply[2].split('<span class="youtube" ')) > 2:
-                reply[2] = '<span class="youtube"'.join(reply[2]\
-                                .split('<span class="youtube"')[:2])
+                reply[2] = '<span class="youtube"'.join(reply[2].split('<span class="youtube"')[:2])
                 if "<pre" and not "</pre>" in reply[2]:
                     reply[2] += "</pre>"
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
-                reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += "<a href='?m=thread;t={t_id}'>["
-                reply[2] += "View full thread]</a></div>"
+                reply[2] += "</p><div class='rmr'>Post shortened. " \
+                            + "<a href='?m=thread;t={0}'>[".format(t_id) \
+                            + "View full thread]</a></div>"
             elif len(reply[2]) > 850:
                 reply[2] = reply[2][:850]
                 if "<pre" and not "</pre>" in reply[2]:
                     reply[2] += "</pre>"
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
-                reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += f"<a href='?m=thread;t={t_id}'>"
-                reply[2] += "[View full thread]</a></div>"
-            show_r = conf[13]
+                reply[2] += "</p><div class='rmr'>Post shortened. " \
+                            + "<a href='?m=thread;t={0}'>".format(t_id) \
+                            + "[View full thread]</a></div>"
+            show_r = b_conf[13]
             if int(r_cnt) > show_r and p_n == int(r_cnt):
-                reply[2] += "</p><br><div class='rmr'>" 
-                reply[2] += f"<a href='?m=thread;t={t_id}'"
-                reply[2] += ">[Read all posts]</a></div><br>"
+                reply[2] = reply[2] + "</p><br><div class='rmr'>" \
+                            +"<a href='?m=thread;t={0}'".format(t_id) \
+                            +">[Read all posts]</a></div><br>"
             reply[2] += "</div>"
         replies.append(reply)
 
@@ -209,7 +197,7 @@ def bbs_thread(t_id='', prev=0):
         print("<b>This thread is locked.</b>")
         print("<p>No more replies can be added.")
         print("</div>")
-    elif int(r_cnt) >= conf[7]:
+    elif int(r_cnt) >= b_conf[7]:
         print("<div class='closed'>", t_modes['1'])
         print("This thread is locked. Reply limit hit.")
         print("</div>")
@@ -218,77 +206,76 @@ def bbs_thread(t_id='', prev=0):
     return replies
 
             
-def bbs_create(prev=0):
+def bbs_create():
     thread_attrs = {'title':'', 'name':'', 'content':''}
-    thread_attrs = {k: wt.get_form(k) for k in thread_attrs.keys()}
-    if wt.get_form('m') == "create" and None in [thread_attrs['title'], thread_attrs['content']]:
+    for key in thread_attrs.keys():
+        if wt.get_form(key):
+            thread_attrs[key] = wt.get_form(key)
+    if thread_attrs['title'] and thread_attrs['content']:
+        thread_attrs['title'] = thread_attrs['title'][:30].strip()
+        if thread_attrs['name']:
+            thread_attrs['name'] = \
+                thread_attrs['name'][:18].strip()
+            if '#' in thread_attrs['name']:
+                namentrip = thread_attrs['name'].split('#')[:2]
+                namentrip[1] = tripcode(namentrip[1])
+                thread_attrs['name'] = '</span> <span class="trip">'.join(namentrip)
+        thread_attrs['content'] = thread_attrs['content'].strip().replace('\r\n', "<br>")[:2000]
+        thread_attrs['dt'] = str(time.time())[:10]
+        if not thread_attrs['name']:
+            thread_attrs['name'] = 'Anonymous'
+        local_dt = time.localtime(int(thread_attrs['dt']))
+        date_str = "%Y-%m-%d [%a] %H:%M"
+        thread_attrs['ldt'] = time.strftime(date_str, local_dt)
+        t_fn = thread_attrs['dt'] + ".txt"
+        with open(b_conf[5] + t_fn, "x") as new_thread:
+            new_thread.write(thread_attrs['title'] + "\n" \
+                + thread_attrs['name'] + " >< " \
+                + thread_attrs['ldt'] + " ><  >< " \
+                + thread_attrs['content'] + "\n" )
+            print("Thread <i>{0}</i> posted successfully!".format(thread_attrs['title']))
+        with open(b_conf[11], "a") as log:
+            ip = os.environ["REMOTE_ADDR"]
+            # IP | location | filename | ldt | comment
+            log_data = " | ".join([ip, t_fn, thread_attrs['ldt'], \
+                                   thread_attrs['title'], thread_attrs['name'], thread_attrs['content']+"\n"])
+            log.write(log_data)
+            print("Redirecting you in 5 seconds...")
+            print("<meta http-equiv='refresh' content='5;.'")
+        with open(b_conf[6], "r") as t_list:
+            t_list = t_list.read().splitlines()
+            new_t = " >< ".join([thread_attrs['dt'], \
+                thread_attrs['ldt'], thread_attrs['title'], \
+                    "1", "0"])
+            for n, t in enumerate(t_list):
+                t = t.split(" >< ")
+                if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
+                    t_list.insert(n, new_t)
+                    break
+                else:
+                    pass
+            else:
+                t_list.insert(0, new_t)
+        with open(b_conf[6], "w") as upd_list:
+            upd_list.write('\n'.join(t_list))
+            
+    else:
         if not thread_attrs['title']:
-            print("You need to enter a title to post a new thread.<br>")
-        if not thread_attrs['content']:
+            if thread_attrs['content']:
+                print("You need to enter a title to post a new thread.<br>")
+        elif not thread_attrs['content']:
             print("You need to write a message to post a new thread.<br>")
         with open("./html/create.html") as c_thread:
             print(c_thread.read())
-        return
-    elif wt.get_form('m') != "create":
-        with open("./html/create.html") as c_thread:
-            print(c_thread.read())
-        return
-    thread_attrs['title'] = thread_attrs['title'][:30].strip()
-    if thread_attrs['name']:
-        thread_attrs['name'] = \
-            thread_attrs['name'][:18].strip()
-        if '#' in thread_attrs['name']:
-            namentrip = thread_attrs['name'].split('#')[:2]
-            namentrip[1] = tripcode(namentrip[1])
-            thread_attrs['name'] = '</span> <span class="trip">'\
-                                        .join(namentrip)
-    else:
-        thread_attrs['name'] = 'Anonymous'
-    thread_attrs['content'] = thread_attrs['content']\
-                            .strip().replace('\r\n', "<br>")[:2000] +'\n'
-    dt = wt.fancy_time('', 'unix')
-    ldt = wt.fancy_time(dt, 'human')
-    t_fn = dt + ".txt"
-    with open(conf[5] + t_fn, "x") as new_thread:
-        new_thread.write(thread_attrs['title'] + "\n" \
-            + thread_attrs['name'] + " >< " \
-            + ldt + " ><  >< " \
-            + thread_attrs['content'])
-        print("Thread <i>{0}</i> posted successfully!"\
-              .format(thread_attrs['title']))
-    with open(conf[11], "a") as log:
-        ip = os.environ["REMOTE_ADDR"]
-        # IP | location | filename | ldt | comment
-        log_data = " | ".join([ip, t_fn, ldt,
-                               thread_attrs['title'],
-                               thread_attrs['name'],
-                               thread_attrs['content']])
-        log.write(log_data)
-        print("Redirecting you in 5 seconds..."
-              "<meta http-equiv='refresh' content='5;.'")
-    with open(conf[6], "r") as t_list:
-        t_list = t_list.read().splitlines()
-        new_t = " >< ".join([dt, ldt, thread_attrs['title'], "1", "0"])                
-        for n, t in enumerate(t_list):
-            t = t.split(" >< ")
-            if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
-                t_list.insert(n, new_t)
-                break
-            else:
-                pass
-        else:
-            t_list.insert(0, new_t)
-    with open(conf[6], "w") as upd_list:
-        upd_list.write('\n'.join(t_list))
 
-def bbs_list(prev=0, rss=False):
-    with open(conf[6]) as t_list:
+def bbs_list(prev='0', rss=False):
+    if prev == '0':
+        s_ts = None
+    else:
+        s_ts = b_conf[12]
+    with open(b_conf[6]) as t_list:
         t_list = t_list.read().splitlines()
     t_cnt = len(t_list)
-    if not prev:
-        s_ts = t_cnt
-    else:
-        s_ts = conf[12]
     cnt = 1
     if not rss:
         print("<a name='tbox'></a><table>")
@@ -299,29 +286,28 @@ def bbs_list(prev=0, rss=False):
         t = t.split(" >< ")
         if not rss:
             print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
-        if int(t[3]) >= conf[7] and t[4] not in ["1", "3"]:
+        if int(t[3]) >= b_conf[7] and t[4] not in ["1", "3"]:
             t[2] = t_modes['1'] + t[2]
-        elif int(t[3]) >= conf[7] and t[4] == "2":
+        elif int(t[3]) >= b_conf[7] and t[4] == "2":
             t[2] = t_modes['3'] + t[2]
         elif t[4] in t_modes.keys():
             t[2] = t_modes[t[4]] + t[2]
-        if not rss and prev:
+        if not rss:
             print("</a><td><a href='#" \
-                  + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
-        elif not rss:
-            print("</a><td><a href='?m=thread;t=" \
-            + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
+                    + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
         else:
             rss_list.append(t)
         cnt += 1
     if rss:
         return rss_list
-    print("<tr><td>")
-    if prev and (t_cnt - s_ts) > 0:
-        print("<td colspan='2'>")
-        print("<a href='?m=list'>View all threads</a> ({t_cnt - s_ts} hidden)<td>")
-    else:
-        print("<td colspan='3'>")
+    elif prev == "1":
+        print("<tr><th>")
+        if (t_cnt - s_ts) > 0:
+            print("<td colspan='2'><a href='?m=list'>")
+            print("View all threads</a> ({0} hidden)".format(t_cnt - s_ts))
+            print("<td>")
+        else:
+            print("<td colspan='3'>")
         print("<a href='#create'>Create new thread</a>")
     print("</table>")
 
@@ -333,27 +319,27 @@ def bbs_atom(m='t'):
     amode = wt.get_form('r')
     if amode not in ['p', 't']:
         bbs_header()
-        print(conf[8])
+        print(b_conf[8])
         return
     print("""Content-type: application/atom+xml\r\n
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">""")
     if amode == 'p':
-        print("<title>{0}: 50 latest posts</title>".format(conf[0]))
-        print(f"<link rel='self' href='{conf[8]}?m=atom;r=p' />")
-        print("<id>{0}#posts</id>".format(conf[8]))
+        print("<title>{0}: 50 latest posts</title>".format(b_conf[0]))
+        print("<link rel='self' href='" + b_conf[8] + "?m=atom;r=p' />")
+        print("<id>{0}#posts</id>".format(b_conf[8]))
         isot = "%Y-%m-%dT%H:%M:00%z"
-        with open(conf[6], 'r') as tlist:
+        with open(b_conf[6], 'r') as tlist:
             tlist = tlist.read().splitlines()
         tdict = {}
         for t in tlist:
             t = t.split(" >< ")
             tdict[t[0]] = t[2]
-        with open(conf[10]) as ip_l:
+        with open(b_conf[10]) as ip_l:
             ip_l = ip_l.read().splitlines()[::-1][:50]
         l_upd = ip_l[0].split(" >< ")[1].replace(" ", "").replace(".", "-")
         l_upd = re.sub(r'\[(.*?)\]', 'T', l_upd)
-        print("<updated>" + l_upd + conf[9] + "</updated>")
+        print("<updated>" + l_upd + b_conf[9] + "</updated>")
         for p in ip_l:
             print("\n<entry>")
             # 0: thread fn, 1: time, 2: post,
@@ -362,40 +348,42 @@ def bbs_atom(m='t'):
             p = [p[0].split(" | ")[1], p[1], cgi.escape(p[3])]
             p[0] = p[0].split(".")[0]
             p[1] = p[1].replace(" ", "").replace(".", "-")
-            p[1] = re.sub(r'\[(.*?)\]', 'T', p[1]) + conf[9]
+            p[1] = re.sub(r'\[(.*?)\]', 'T', p[1]) + b_conf[9]
             p.append('"' + cgi.escape(tdict[p[0]]) + '"')
-            p.append(conf[8] + "?m=thread;t=" + p[0])
-            print(f"<updated>{p[1]}</updated>",
-                  f"<id>{p[4]}#{p[1]}</id>",
-                  f"<title>reply in thread {p[3]}</title>",
-                  f"<link rel='alternate' href='{p[4]}'/>",
-                  f"<content type='html'>{p[2]}</content>\n</entry>\n")
+            p.append(b_conf[8] + "?m=thread;t=" + p[0])
+            print("<updated>" + p[1] + "</updated>")
+            print("<id>" + p[4] + "#" + p[1] + "</id>")
+            print("<title>reply in thread", p[3], "</title>")
+            print("<link rel='alternate' href='" + p[4] + "'/>")
+            print("<content type='html'>", p[2], "</content>")
+            print("</entry>\n")
         print("</feed>")
     elif amode == 't':
-        print("<title>{0}: 50 latest threads</title>".format(conf[0]))
-        print("<link rel='self' href='" + conf[8] + "?m=atom;r=t' />")
-        print("<id>{0}#threads</id>".format(conf[8]))
-        t_list = bbs_list(0, 1)
+        print("<title>{0}: 50 latest threads</title>".format(b_conf[0]))
+        print("<link rel='self' href='" + b_conf[8] + "?m=atom;r=t' />")
+        print("<id>{0}#threads</id>".format(b_conf[8]))
+        t_list = bbs_list('0', "1")
         t_list.sort(key=lambda t_list:t_list[0])
         upd = t_list[-1][0]
 #        print(t_list)
         l_upd = time.localtime(int(upd))
-        isot = "%Y-%m-%dT%H:%M" + conf[9]
+        isot = "%Y-%m-%dT%H:%M" + b_conf[9]
         l_upd = time.strftime(isot, l_upd)
-        print(f"<updated>{l_upd}</updated>")
+        print("<updated>" + l_upd + "</updated>")
         for t in t_list[::-1]:
             print("\n<entry>")
             upd = time.localtime(int(t[0]))
-            t_url = conf[8] + "?m=thread;t=" + t[0]
-            print(f"<updated>{time.strftime(isot, upd)}</updated>",
-                  f"<id>{t_url}</id>",
-                  f"<link rel='alternate' href='{t_url}' />",
-                  f"<title>{cgi.escape(t[2])}</title>")
-            with open(conf[5] + t[0] + ".txt", "r") as tt:
+            t_url = b_conf[8] + "?m=thread;t=" + t[0]
+            print("<updated>" + time.strftime(isot, upd) + "</updated>")
+            print("<id>" + t_url + "</id>")
+            print("<link rel='alternate' href='" + t_url + "' />")
+            print("<title>", cgi.escape(t[2]), "</title>")
+            with open(b_conf[5] + t[0] + ".txt", "r") as tt:
                 tt = tt.read().splitlines()[1]
                 tt = " >< ".join(tt.split(" >< ")[3:])
                 tt = cgi.escape(tt)
-            print(f"<content type='html'>{tt}</content>\n</entry>")
+            print("<content type='html'>", tt, "</content>")
+            print("</entry>")
         print("</feed>")
 
 def bbs_foot():
@@ -425,8 +413,8 @@ def do_reply():
         namentrip[1] = tripcode(namentrip[1])
         if not namentrip[0]:
             namentrip[0] = "Anonymous"
-        if conf[3] == namentrip[1][2:]:
-            namentrip = ['', conf[2]]
+        if b_conf[3] == namentrip[1][2:]:
+            namentrip = ['', b_conf[2]]
             reply_attrs['name'] = '</span> <span class="admin">'\
                                                     .join(namentrip)
         else:
@@ -453,7 +441,7 @@ def do_reply():
     num_replies = len(ter) - 1
     if "><" in ter[0] and ter[0].split(">< ")[1] in ["1", "3"]:
         fale = 3
-    elif num_replies >= conf[7]:
+    elif num_replies >= b_conf[7]:
         fale = 1
     else:
         ter = ter[-1].split(' >< ')
@@ -474,12 +462,12 @@ def do_reply():
         return None
 
     ip = os.environ["REMOTE_ADDR"]
-    reply_attrs['t'] = reply_attrs['t'][len(conf[5]):]
+    reply_attrs['t'] = reply_attrs['t'][len(b_conf[5]):]
     log_data = " | ".join([ip, reply_attrs['t'],
                            f"#{num_replies} | {reply_string}"])
 
     # update ips.txt (log of posts + ips)
-    with open(conf[10], "a") as log:
+    with open(b_conf[10], "a") as log:
             log.write(log_data)
     print("comment successfully posted<p>Redirecting you in"
           " 5 seconds...", wt.redirect())
@@ -491,7 +479,7 @@ def do_reply():
     new_t = []
     sage = 0
     # load list.txt
-    with open(conf[6]) as t_list:
+    with open(b_conf[6]) as t_list:
         t_list = t_list.read().splitlines()
     for n, t in enumerate(t_list):
         t = t.split(' >< ')
@@ -527,13 +515,13 @@ def do_reply():
             break
     for n, l in enumerate(nt_list):
         nt_list[n] = " >< ".join(l)        
-    with open(conf[6], "w") as new_tl:
+    with open(b_conf[6], "w") as new_tl:
         new_tl.write('\n'.join(nt_list))
 
 def do_prev(bbt=[]):
     if not bbt:
-        with open(conf[6]) as t_list:
-            t_list = t_list.read().splitlines()[:conf[12]]
+        with open(b_conf[6]) as t_list:
+            t_list = t_list.read().splitlines()[:b_conf[12]]
         for n, t in enumerate(t_list):
             t = t.split(" >< ")
             bbs = bbs_thread(t[0], 1)
@@ -543,11 +531,11 @@ def do_prev(bbt=[]):
         return
     pstcnt = 0
     bbn = len(bbt[0])
-    if bbn > conf[13]:
-        bbn = len(bbt[0]) - conf[13] + 1
+    if bbn > b_conf[13]:
+        bbn = len(bbt[0]) - b_conf[13] + 1
     else:
         bbn = 1
-    with open(conf[5] + str(bbt[1]) + ".txt") as t:
+    with open(b_conf[5] + str(bbt[1]) + ".txt") as t:
         t_t = t.readline()[:-1]
         t_r = len(t.read().splitlines())
         
@@ -571,15 +559,15 @@ def do_prev(bbt=[]):
             print("Name: {0} \n: Date: {1} \n</div><p>{2}".format(*replies))
         elif pstcnt == (bbn - 1):
             print("<hr>")    
-    if "lock" in t_m or t_r >= conf[7]:
+    if "lock" in t_m or t_r >= b_conf[7]:
         print("""<div class='reply'>
         <div class='rmr'><br>{0}
         Thread locked.<p>
         No more comments allowed
         </div><br></div></div>""".format(t_m))
-    elif t_r < conf[7]:
+    elif t_r < b_conf[7]:
 #        print("<hr width='420px' align='left'>")
-        bbs_reply(conf[5] + bbt[1]+".txt")
+        bbs_reply(b_conf[5] + bbt[1]+".txt")
 
 def do_format(urp=''):
     x = "(text omitted)<br>" + urp.split('[/yt]')[-1] \

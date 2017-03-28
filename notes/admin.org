@@ -1,0 +1,18 @@
+* moderate board
+- set title
+- set URL
+- select timezone
+- modify MOTD / foot 
+- select style/s
+
+- set Admin name
+- set tripcode (password)
+
+- set reply limit (per-thread; board rule)
+- set show-threads (frontpage)
+- set show-replies (frontpage)
+
+- view post log (delete/ban/filter)
+- view thread log (delete/ban/filter/mode)
+- view thread directory
+- view thread list (formatted list.txt)

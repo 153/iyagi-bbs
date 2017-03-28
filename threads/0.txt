@@ -1,0 +1,2 @@
+hello world! >< 3
+</span><span class='admin'>Admin >< 1993-09-01 16:20 ><  >< Welcome to iyagi! Have you configured ./settings.txt yet?<p>To remove a thread, remove its entry from list.txt, then delete its file in ./threads/ . Then, remove its entry from ips2.txt<p>To remove a post, delete its line in the /threads/#thread.txt and remove its entry from ips.txt<p>To lock a thread, add " >< 1" to its title in its file. Then, change the last value to its row in list.txt to "1".<br><br>2 stickies, 3 stickylocks, 4 permasages
