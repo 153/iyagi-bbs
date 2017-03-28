@@ -6,6 +6,8 @@ Inspired by [Kareha](http://wakaba.c3.cx/s/web/wakaba_kareha),
 [Tablecat BBS](http://tablecat.ipyo.heliohost.org/bbs/), 
 and others. 
 
+Requires python 3.6+, collections (for defaultdict)
+
 1. Features
 2. Screenshots
 3. Installation
