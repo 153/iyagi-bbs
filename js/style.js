@@ -64,8 +64,9 @@ var title = cookie ? cookie : getPreferredStyleSheet();
 setActiveStyleSheet(title);
 
 function addText(elId,text) {
-    text = ">>" + text + " \\r";
+    text = ">>" + text + " \n";
     document.getElementById(elId).value += text;
+    document.getElementById(elId).focus();
 }
 
 
