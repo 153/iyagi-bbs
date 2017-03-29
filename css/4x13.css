@@ -71,8 +71,11 @@ hr {
     padding-bottom: 35px;
 }
 
-.reply > p {padding-left: 4%; line-height: 1.6em}
-
+.comment {
+    padding: 1% 0 1% 4%;
+    line-height: 1.6em
+    margin: 0.5em 0 0 3em;
+}
 .bump {color: #153; font-weight: bold}
 .sage {color: #444; font-weight: bold; font-style: italic}
 .trip {color: #889; font-weight: normal}

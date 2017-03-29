@@ -71,7 +71,10 @@ def main():
 def bbs_header():
     with open("./html/head.html", "r") as head:
         print(head.read().format(conf[0]))
-
+    print("""<style>
+  .x {visibility: hidden;width:0;height:0;display:none}
+</style>""")
+        
 def bbs_main():
     print("<div class='front'>")
     print("""Styles: 
@@ -297,8 +300,8 @@ def bbs_list(prev=0, rss=False):
         s_ts = conf[12]
     cnt = 1
     if not rss:
-        print("<a name='tbox'></a><table>")
-        print("<th>{0} <th>Title <th>Posts <th>Last post".format(t_cnt))
+        print("<a name='tbox'></a><table class='sortable'><thead>")
+        print("<th>{0} <th>Title <th>Posts <th>Last post</thead>".format(t_cnt))
     else:
         rss_list = []
     for t in t_list[:s_ts]:
@@ -413,7 +416,8 @@ def do_reply():
     for key in reply_attrs.keys():
         if wt.get_form(key):
             reply_attrs[key] = wt.get_form(key)
-            
+    if wt.get_form('rname') or wt.get_form('email'):
+        return reply_attrs[comment]
     # Comment and thread are necessary params 
     if not reply_attrs['comment']:
         print("You need to write something to post a comment.")

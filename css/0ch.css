@@ -3,6 +3,13 @@
 	src: url('mona.tff');
 }
 
+div.comment {
+    padding-left: 4%;
+    padding-right: 6%;
+    line-height: 1.6em
+}
+
+
 pre {background-color: #eee; border:1px solid black}
 a {color:#153}
 h2 {text-align:center}
@@ -62,13 +69,6 @@ th, td {
     overflow: visible;
     padding-top: 6px;
     padding-bottom:6px;
-}
-
-.reply > p {
-    text-size: small;
-    padding-left: 4%;
-    padding-right: 6%;
-    line-height: 1.6em
 }
 
 .bump {color: #117743; font-weight: bold}
