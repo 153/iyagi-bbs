@@ -3,24 +3,11 @@ import re
 from collections import defaultdict
 import webtools as wt
 
-with open('./set.txt', 'r') as sett:
-    sett = sett.read().splitlines()
-
-sd = {}
-for n, s in enumerate(sett):
-    if len(s) > 1 and s[0] not in ["", "#", " "]:
-        s = s.split(':')
-        if len(s) > 2:
-            s[1] = ":".join(s[1:])
-        sd[s[0]] = s[1]
-        sett[n] = s[0]
-    else:
-        sett[n] = ''
-sett = [i for i in sett if i]
+threadpath  "./threads/"
 
 def load_thread(th):
     th = int(th)
-    thp = str(sd['thrdb'] + str(th) + '.txt')
+    thp = str(threadpath + str(th) + '.txt')
     if not os.path.exists(thp):
         return None
     with open(thp, 'r') as mt:
@@ -42,8 +29,3 @@ def do_backlink(th='0'):
         r = str(r)
     return bld
     
-def main():
-    print(" ")
-
-if __name__ == "__main__":
-    main()
