@@ -3,14 +3,13 @@
 import os, cgi, cgitb
 import time, re, crypt
 import webtools as wt
-import backlink
+import backlink, bans
 
 form = cgi.FieldStorage()
 settings = "./settings.txt"
-cgitb.enable() # This shows error messages 
+cgitb.enable()
 
-
-bad_words = ["nigger", "kike", "chink", "faggot", "spic"]
+bad_words = ["nigger", "kike", "spic", "gook", "pandora"]
 
 # To generate a mod password, use tripcode.py3 to generate a tripkey.
 # What comes out is the result of a code that generates something like
@@ -45,9 +44,10 @@ with open(settings, "r") as settings:
             pass
         conf.append(s[1])
 
-f = {"main":"bbs_main()", "thread":"bbs_thread()",
+f = {"main":"bbs_main()",  "thread":"bbs_thread()",
      "list":"bbs_list()", "create":"bbs_create()",
-     "reply":"do_reply()", "atom":"bbs_atom()"}
+     "reply":"do_reply()", "atom":"bbs_atom()"
+     }
 
 t_modes = {"0":"", \
     "1":"<img src='./img/lock.png' alt='Lock'>", 
@@ -92,7 +92,7 @@ def bbs_main():
     do_prev()
     print("<hr>")
     bbs_create()
-#    print("</div>")
+    print("</div>")
 
 def bbs_thread(t_id='', prev=0):
     if not t_id and wt.get_form('t'):
@@ -243,6 +243,17 @@ def bbs_create(prev=0):
         with open("./html/create.html") as c_thread:
             print(c_thread.read())
         return
+
+    if bans.is_banned(wt.get_ip()):
+        print("<center>")
+        print("<h1>You are banned!</h1>")
+        print("<h3>", bans.is_banned(wt.get_ip()), "</h3>")
+        return
+    for word in bad_words:
+        if word in [thread_attrs["title"].lower(), 
+                   thread_attrs["content"].lower()]:
+            print("<center><h2>Bad word error.</h2></center>")
+            return
     
     thread_attrs['title'] = thread_attrs['title'][:30].strip()
     if thread_attrs['name']:
@@ -282,7 +293,6 @@ def bbs_create(prev=0):
 
     for n, t in enumerate(t_list):
         t = t.split(" >< ")
-        print(t, len(t), t[4])
         if len(t) == 5 and t[4] not in ["2", "3"] or len(t) == 4:
             t_list.insert(n, new_t)
             break
@@ -416,11 +426,17 @@ def bbs_foot():
         
 def do_reply():
     reply_attrs = {'name':'', 'bump':'', 'comment':'', 't':''}
+    if bans.is_banned(wt.get_ip()):
+        print("<center>")
+        print("<h1>You are banned!</h1>")
+        print("<h3>", bans.is_banned(wt.get_ip()), "</h3>")
+        return
     for key in reply_attrs.keys():
         if wt.get_form(key):
             reply_attrs[key] = wt.get_form(key)
     for word in bad_words:
         if word in reply_attrs["comment"].lower():
+            print("<center><h2>Bad word error.</h2></center>")
             return
     if wt.get_form('rname') or wt.get_form('email'):
         return reply_attrs[comment]
