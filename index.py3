@@ -7,7 +7,10 @@ import backlink
 
 form = cgi.FieldStorage()
 settings = "./settings.txt"
-cgitb.enable()
+cgitb.enable() # This shows error messages 
+
+
+bad_words = ["nigger", "kike", "chink", "faggot", "spic"]
 
 # To generate a mod password, use tripcode.py3 to generate a tripkey.
 # What comes out is the result of a code that generates something like
@@ -416,6 +419,9 @@ def do_reply():
     for key in reply_attrs.keys():
         if wt.get_form(key):
             reply_attrs[key] = wt.get_form(key)
+    for word in bad_words:
+        if word in reply_attrs["comment"].lower():
+            return
     if wt.get_form('rname') or wt.get_form('email'):
         return reply_attrs[comment]
     # Comment and thread are necessary params 
