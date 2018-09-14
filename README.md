@@ -11,7 +11,8 @@ Requires python 3.6+, collections (for defaultdict)
 1. Features
 2. Screenshots
 3. Installation
-4. To-do 
+4. Settings / config
+5. To-do 
 
 ## 1. Features
 The script iyagi (이야기,  "chat") is approaching a nicer cleaner
@@ -95,7 +96,36 @@ followed by that same value to the title line.
 
 Clunky, but it works for now :) 
 
-## 4. To-do 
+## 4. Settings / config 
+settings.txt
+- 0. board name
+- 1. board url
+- 2. mod username
+- 3. mod password (using hash generated from ./tripcode.py)
+- 4. theme (unused)
+- 5. thread storage (./threads)
+- 6. thread list (./list.txt)
+- 7. full URL
+- 8. time zone
+- 9. post IP log (ips.txt)
+- 10. thread IP log (ips2.txt)
+- 11. show recent - 8
+- 12. show replies - 3
+
+index.py
+- settings = `./settings.txt`
+- bad_words = `["bad", "words", "go", "here"]`
+
+bans.py
+```bans = {"ip address":"reason"
+"1.2.3.4":"spam",
+"2.2.2":"a wildcard for 2.2.2"
+".": "ban absolutely everyone from posting"
+}
+```
+
+
+## 5. To-do 
 Your comments/contributions would be appreciated 
 
 Here's what I'd like to bring to future versions of IYAGI
