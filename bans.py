@@ -12,6 +12,6 @@ bans = {
 def is_banned(ip):
     ip = str(ip)
     for b in bans.keys():
-        if b in ip:
+        if ip.startswith(b):
             return bans[b]
     return 0
