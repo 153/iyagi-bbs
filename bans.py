@@ -1,13 +1,14 @@
-
 #!/usr/bin/env python3
 
-bans = {
-    "36.250":"spam",
-    "36.248":"spam",
-    "46.16": "spam",
-    "88.198.48":"nazi",
-    "62.210":"spam"
-}
+with open("bans.txt", "r") as ban:
+    ban = ban.read().splitlines()
+
+bans = {}
+for b in ban:
+    b = b.split(" ")
+    b[1] = " ".join(b[1:])
+    bans[b[0]] = b[1]
+
 
 def is_banned(ip):
     ip = str(ip)
