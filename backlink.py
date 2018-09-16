@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 import webtools as wt
 
-threadpath  "./threads/"
+threadpath = "./threads/"
 
 def load_thread(th):
     th = int(th)
