@@ -9,7 +9,9 @@ form = cgi.FieldStorage()
 settings = "./settings.txt"
 cgitb.enable()
 
-bad_words = ["nigger", "kike", "spic", "gook", "pandora"]
+with open("spam.txt", "r") as spam:
+    spam = spam.read().splitlines()
+bad_words = spam
 
 # To generate a mod password, use tripcode.py3 to generate a tripkey.
 # What comes out is the result of a code that generates something like
@@ -205,7 +207,7 @@ def bbs_thread(t_id='', prev=0):
                 reply[2] += f"<a href='?m=thread;t={t_id}'>"
                 reply[2] += "[View full thread]</a></div>"
             show_r = conf[13]
-            if int(r_cnt) > show_r and p_n == int(r_cnt):
+            if int(r_cnt) > (show_r+1) and p_n == int(r_cnt):
                 reply[2] += "</p><br><div class='rmr'>" 
                 reply[2] += f"<a href='?m=thread;t={t_id}'"
                 reply[2] += ">[Read all posts]</a></div><br>"
