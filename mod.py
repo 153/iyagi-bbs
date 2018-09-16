@@ -57,6 +57,8 @@ def del_thread(thr=''):
     # delete it, then remove thr from list
     # confirm before writing
     
+    thr = str(thr) 
+    
     if os.path.exists(thread_dir + thr + ".txt"):
         print(thread_dir + thr + ".txt")
     for n, line in enumerate(lis):
