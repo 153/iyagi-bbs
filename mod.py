@@ -43,7 +43,7 @@ def mod_thread(thr=''):
     tth[0] = tth[0].split(" >< ")[0] + " >< " + nmod
     print("\n".join(tth))
     with open(thread_dir + thr + ".txt", 'w') as th:
-        th.write("\n".join(tth))
+        th.write("\n".join(tth) + "\n")
     for n, i in enumerate(lis):
         if i.startswith(thr):
             i = i[:-1]
@@ -84,14 +84,14 @@ def mod_post(thr):
     pos = input(f"Post to Modify\n[1-{pcnt}] ")
     pos = int(pos)
     rw = input("Remove or warn?\n[r/w]  ").strip()
-    if 0 < pos < (len(tthr) -1):
+    if 0 < pos < (len(tthr)):
         print(tthr[pos])
         if rw == "r":
             tthr[pos] =  "- >< - ><  >< <i>post removed by moderator</i>"
         elif rw == "w":
             tthr[pos] += "<br><br><b style='color:red'>(USER WAS BANNED FOR THIS POST)</b>"
         with open(thread_dir + thr + ".txt", "w") as thrt:
-            thrt.write("\n".join(tthr))
+            thrt.write("\n".join(tthr) + "\n")
     else:
         print("Post not found:", (len(tthr) - 1),
               "vs", pos)
