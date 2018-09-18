@@ -67,11 +67,15 @@ def main():
         print("<a href='.'>&lt;&lt; back</a><br>")
         print("----"*10, "<p>")
         eval(f[select_func])
-    elif wt.raw_query().isdigit:
+    try:
+        x = 1 / int(wt.raw_query())
+        print("<a href='.'>&lt;&lt; back</a><br>")
+        print("----"*10, "<p>")
         bbs_thread(wt.raw_query())
 
-    else:
+    except:
         bbs_main()
+
     bbs_foot()
     print("</div></div>")
 
