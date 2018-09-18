@@ -73,9 +73,9 @@ def main():
             print("<a href='.'>&lt;&lt; back</a><br>")
             print("----"*10, "<p>")
             bbs_thread(wt.raw_query())
+
         except:
             bbs_main()
-
     bbs_foot()
     print("</div></div>")
 
@@ -179,7 +179,7 @@ def bbs_thread(t_id='', prev=0):
         else:
             if re.compile(r'&gt;&gt;[\d]').search(reply[2]):
                 reply[2] = re.sub(r'&gt;&gt;([\d]+)', 
-                                  r'<a href="?m=thread;t={0}#\1">'\
+                                  r'<a href="?{0}#\1">'\
                                     .format(t_id) + r'&gt;&gt;\1</a>',
                                   reply[2])
                                   
@@ -191,7 +191,7 @@ def bbs_thread(t_id='', prev=0):
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
                 reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += f"<a href='?m=thread;t={t_id}'>["
+                reply[2] += f"<a href='?{t_id}'>["
                 reply[2] += "View full thread]</a></div>"
             elif len(reply[2].split('<span class="youtube" ')) > 2:
                 reply[2] = '<span class="youtube"'.join(reply[2]\
@@ -201,7 +201,7 @@ def bbs_thread(t_id='', prev=0):
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
                 reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += "<a href='?m=thread;t={t_id}'>["
+                reply[2] += "<a href='?{t_id}'>["
                 reply[2] += "View full thread]</a></div>"
             elif len(reply[2]) > 850:
                 reply[2] = reply[2][:850]
@@ -210,12 +210,12 @@ def bbs_thread(t_id='', prev=0):
                 if "<code" and not "</code>" in reply[2]:
                     reply[2] += "</code>"
                 reply[2] += "</p><div class='rmr'>Post shortened. "
-                reply[2] += f"<a href='?m=thread;t={t_id}'>"
+                reply[2] += f"<a href='?{t_id}'>"
                 reply[2] += "[View full thread]</a></div>"
             show_r = conf[13]
-            if int(r_cnt) > (show_r+1) and p_n == int(r_cnt):
+            if int(r_cnt) > show_r and p_n == int(r_cnt):
                 reply[2] += "</p><br><div class='rmr'>" 
-                reply[2] += f"<a href='?m=thread;t={t_id}'"
+                reply[2] += f"<a href='?{t_id}'"
                 reply[2] += ">[Read all posts]</a></div><br>"
             reply[2] += "</div>"
         replies.append(reply)
@@ -328,7 +328,7 @@ def bbs_list(prev=0, rss=False):
     for t in t_list[:s_ts]:
         t = t.split(" >< ")
         if not rss:
-            print("<tr><td><a href='?m=thread;t={0}'>{1}.".format(t[0], cnt))
+            print("<tr><td><a href='?{0}'>{1}.".format(t[0], cnt))
         if int(t[3]) >= conf[7] and t[4] not in ["1", "3"]:
             t[2] = t_modes['1'] + t[2]
         elif int(t[3]) >= conf[7] and t[4] == "2":
@@ -339,7 +339,7 @@ def bbs_list(prev=0, rss=False):
             print("</a><td><a href='#" \
                   + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
         elif not rss:
-            print("</a><td><a href='?m=thread;t=" \
+            print("</a><td><a href='?" \
             + "{0}'>{2}</a>&nbsp; <td>{3} <td>{1} &nbsp;".format(*t))
         else:
             rss_list.append(t)
@@ -394,7 +394,7 @@ def bbs_atom(m='t'):
             p[1] = p[1].replace(" ", "").replace(".", "-")
             p[1] = re.sub(r'\[(.*?)\]', 'T', p[1]) + conf[9]
             p.append('"' + cgi.escape(tdict[p[0]]) + '"')
-            p.append(conf[8] + "?m=thread;t=" + p[0])
+            p.append(conf[8] + "?" + p[0])
             print(f"<updated>{p[1]}</updated>",
                   f"<id>{p[4]}#{p[1]}</id>",
                   f"<title>reply in thread {p[3]}</title>",
@@ -416,7 +416,7 @@ def bbs_atom(m='t'):
         for t in t_list[::-1]:
             print("\n<entry>")
             upd = time.localtime(int(t[0]))
-            t_url = conf[8] + "?m=thread;t=" + t[0]
+            t_url = conf[8] + "?" + t[0]
             print(f"<updated>{time.strftime(isot, upd)}</updated>",
                   f"<id>{t_url}</id>",
                   f"<link rel='alternate' href='{t_url}' />",
@@ -598,7 +598,7 @@ def do_prev(bbt=[]):
             t_t = t_t.split(" >< ")[0] + t_m
         else:
             t_t = t_t.split(" >< ")[0]
-    print("<a href='?m=thread;t={0}'>{1} [{2}]"\
+    print("<a href='?{0}'>{1} [{2}]"\
           .format(bbt[1], t_t, len(bbt[0])))
     print("</a></h3>")
 
