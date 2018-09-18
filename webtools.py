@@ -16,6 +16,9 @@ def head(title=''):
     header.append("<title>{0}</title>".format(title))
     return "\n".join(header)
 
+def raw_query():
+    return os.environ["QUERY_STRING"]
+
 def get_form(val):
     if form.getvalue(val):
         if len(form.getvalue(val)[0]) > 1:
