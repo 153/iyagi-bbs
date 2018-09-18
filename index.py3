@@ -67,14 +67,14 @@ def main():
         print("<a href='.'>&lt;&lt; back</a><br>")
         print("----"*10, "<p>")
         eval(f[select_func])
-    try:
-        x = 1 / int(wt.raw_query())
-        print("<a href='.'>&lt;&lt; back</a><br>")
-        print("----"*10, "<p>")
-        bbs_thread(wt.raw_query())
-
-    except:
-        bbs_main()
+    else:
+        try:
+            x = 1 / int(wt.raw_query())
+            print("<a href='.'>&lt;&lt; back</a><br>")
+            print("----"*10, "<p>")
+            bbs_thread(wt.raw_query())
+        except:
+            bbs_main()
 
     bbs_foot()
     print("</div></div>")
