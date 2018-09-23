@@ -1,0 +1,272 @@
+/* Geocities Style written by Joseph for Tinychan. */
+
+html {
+  height: 99%;
+}
+
+body {
+    padding: 0 1.5%;
+    position: relative;
+    min-height: 97%;
+}
+
+html, body, a, span, p, button {
+    font-family: "Comic Sans","Comic Sans MS", "sanserif";
+}
+
+textarea {
+    max-width: 89vw;
+    min-width: 40vw;
+    min-height: 20vh;
+}
+
+input, textarea{
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box; 
+            box-sizing: border-box; 
+            width: 95%;
+}
+
+#topicbox input.submit {
+    width: initial;
+}
+
+td.label {
+    text-align: right;
+}
+
+#page_content {
+    padding-bottom: 70px;
+}
+
+
+.footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 0.8em;
+}
+
+td.main {
+    width: 90%;
+}
+
+#pages a, .links a {
+    margin-right: 4px;
+}
+
+.noscreen {
+    display: none !important;
+    border: 1px solid black;
+}
+
+.board_name {
+    margin: 0;
+}
+
+.post {
+    overflow: hidden;
+}
+
+body {
+    background-image:url("https://files.tinychan.org/style/themes/geocities/bg.gif");
+    font-size: large;
+    color: white;
+}
+
+body, a:hover, button, input {
+    cursor: url(https://files.tinychan.org/style/themes/geocities/cur15.ani), url(https://files.tinychan.org/style/themes/geocities/cur15.png), progress !important;
+}
+
+a {
+    color: #7171ff;
+}
+
+h1 a {
+    font-size: 26pt;
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+    background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+    color:transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: blink 2s step-start 0s infinite;
+    -webkit-animation: blink 2s step-start 0s infinite;
+}
+
+.title {
+    font-size: medium;
+    color: #b7b7b7;
+}
+
+.rmr a {
+    display: block;
+}
+
+span.quote {
+    color: #008000;
+}
+
+#main_menu_wrapper {
+    text-align: center;
+}
+
+#main_menu {
+    display: inline;
+}
+
+#main_menu a {
+    color: #ff0 !important;
+}
+
+#main_menu li em:after {
+    content: url("https://files.tinychan.org/style/themes/geocities/hot.gif");
+}
+
+button.num {
+    background: none;
+    border: 0;
+    color: #c3c3c3;
+}
+
+h2 {
+    display: inline;
+}
+
+#threadlist {
+    padding-bottom: 35px;
+}
+
+.subject, h3 {
+    padding-top: 15px;
+}
+
+h3 a {
+    color: beige;
+}
+
+span.name, .bump {
+    color: yellow;
+}
+
+.sage {
+    color: #b0b0ff
+}
+
+span.trip {
+    color: red;
+}
+
+
+.desktop-mode #footer:after {
+    content: url("https://files.tinychan.org/style/themes/geocities/mchammer.gif");
+    position: absolute;
+    top: 0;
+    right: 0%;
+}
+.desktop-mode #footer:before {
+    content: url("https://files.tinychan.org/style/themes/geocities/mchammer.gif");
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.cited:before {
+    content: url("https://files.tinychan.org/style/themes/geocities/hot.gif");
+    font-style: initial;
+    color: #f00;
+    font-weight: bolder;
+}
+
+.cited {
+    background: -moz-linear-gradient(top, #ff3019 0%, #cf0404 100%);
+    background: -webkit-linear-gradient(top, #ff3019 0%,#cf0404 100%);
+    background: linear-gradient(to bottom, #ff3019 0%,#cf0404 100%);
+    padding-right: 20px
+    color: #fff;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.0;
+  }
+}
+@-webkit-keyframes blink {
+  50% {
+    opacity: 0.0;
+  }
+}
+
+input,textarea {
+    background-color: black;
+    color: white;
+}
+
+.comment {
+    margin: .5em 0 1em 2em;
+    word-wrap: break-word;
+    position: relative;
+}
+.postform {
+    display: inline-block;
+}
+.sjis, .aa, .thread_menu {
+    font-family: Mona, "MS PGothic", Osaka, Meiryo, sans-serif;
+    line-height: 1.1;
+    display: inline;
+}
+code, .code {
+    font: 100% Andale Mono,Courier New,monospace;
+    display: inline;
+    line-height: 120%;
+    white-space: nowrap;
+}
+.precode {
+    font: 100% Andale Mono,Courier New,monospace;
+    display: inline;
+    line-height: 120%;
+    white-space: pre-wrap;
+}
+.spoiler {
+      display: inline;
+      background: #000;
+      color: #000;
+      padding: 0;
+}
+.spoiler:hover {
+      color: #FFF;
+}
+li, ol, .ascii {
+    margin: 0;
+}
+.ascii {
+    display: inline;
+    font-family: "Courier New", Monospace;
+}
+span.quote, blockquote {
+    border-left-color: #666;
+    color: #666;
+    display:block;
+    border-width: medium medium medium 2px; 
+    border-style: none none none solid; 
+    margin: 3px 0px; 
+    padding: 0px 0px 0px 10px; 
+}
+
+
+td.postfieldleft {
+    text-align: center;
+    font-weight: bold;
+}
+
+
+span.backlinks {
+    display: block;
+    font-size: smaller;
+    padding-left: 15px;
+    font-style: italic;
+    color: #a79393;
+}
+
+
+/* Prettify */
