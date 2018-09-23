@@ -91,6 +91,8 @@ def bbs_main():
     print("""Styles: 
     [<a href="javascript:setActiveStyleSheet('4x13');">4x13</a>]
     [<a href="javascript:setActiveStyleSheet('7ch');">7ch</a>]
+    [<a href="javascript:setActiveStyleSheet('vba');">vba</a>]
+    [<a href="javascript:setActiveStyleSheet('Geocities');">Geocities</a>]
     [<a href="javascript:setActiveStyleSheet('0ch');">0ch</a>]""")
     print(f"<h2><a href='#tbox'>&#9632;</a> {conf[0]}</h2>")
     with open('./html/motd.html', 'r') as motd:
