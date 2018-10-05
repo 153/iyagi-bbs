@@ -1,4 +1,4 @@
-/* WIP */
+/* vBulletin archives style for iyagi by ssz */
 
 /* General */
 body {
@@ -9,12 +9,6 @@ body {
 hr {
   visibility: hidden;
   display: none;
-}
-.front {
-  
-}
-a {
-    
 }
 img[src*="./img/"] {
   width: 12px;
@@ -178,6 +172,7 @@ div .comment {
 }
 .admin{
   color: #800020;
+  font-weight: bold;
 }
 .quote {
   color: silver;
@@ -196,18 +191,14 @@ div .comment {
   font-style: italic;
 }
 .bl {
-  border: 1px dashed #777;
-  margin-top: 8px;
-  margin-left: 12px;
-  padding: 12px;
-  padding-left: 13px;
-  max-width: 410px;
-  font-size: small;
-  background-color: #ccc;
+  display: inline;
+  font-style: italic;
 }
-pre {
-  background-color: #eee;
-  border:1px solid black
+.bl > a {
+  color: blue !important;
+}
+.bl > a:hover {
+  color: red !important;
 }
 pre {
   max-width: 500px;
