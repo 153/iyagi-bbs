@@ -186,8 +186,8 @@ def bbs_thread(t_id='', prev=0):
                                   reply[2])
                                   
             reply[2] = do_format(reply[2])
-            if len(reply[2].split('<br>')) > 8:
-                reply[2] = '<br>'.join(reply[2].split('<br>')[:9])[:850]
+            if len(reply[2].split('<br>')) > 12:
+                reply[2] = '<br>'.join(reply[2].split('<br>')[:12])[:850]
                 if "<pre" and not "</pre>" in reply[2]:
                     reply[2] += "</pre>"
                 if "<code" and not "</code>" in reply[2]:
@@ -205,8 +205,8 @@ def bbs_thread(t_id='', prev=0):
                 reply[2] += "</p><div class='rmr'>Post shortened. "
                 reply[2] += "<a href='?{t_id}'>["
                 reply[2] += "View full thread]</a></div>"
-            elif len(reply[2]) > 850:
-                reply[2] = reply[2][:850]
+            elif len(reply[2]) > 1400:
+                reply[2] = reply[2][:1400]
                 if "<pre" and not "</pre>" in reply[2]:
                     reply[2] += "</pre>"
                 if "<code" and not "</code>" in reply[2]:
@@ -215,7 +215,7 @@ def bbs_thread(t_id='', prev=0):
                 reply[2] += f"<a href='?{t_id}'>"
                 reply[2] += "[View full thread]</a></div>"
             show_r = conf[13]
-            if int(r_cnt) > show_r and p_n == int(r_cnt):
+            if (int(r_cnt) - 1) > show_r and p_n == int(r_cnt):
                 reply[2] += "</p><br><div class='rmr'>" 
                 reply[2] += f"<a href='?{t_id}'"
                 reply[2] += ">[Read all posts]</a></div><br>"
@@ -456,8 +456,9 @@ def do_reply():
         return None
     elif not reply_attrs['t']:
         return None
-    reply_attrs['comment'] = reply_attrs['comment'].\
-                        strip().replace('\r\n', "<br>")[:5000]
+    reply_attrs['comment'] = reply_attrs['comment']\
+                        .strip().replace('\r\n', "<br>")[:5000]\
+                        .encode("ascii", "ignore").decode()
     
     # Get the name, generating trip / capcoding admin as needed
     if not reply_attrs['name']:
